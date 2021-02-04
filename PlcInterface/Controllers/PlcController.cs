@@ -22,14 +22,14 @@ namespace PlcInterface.Controllers
         }
 
         // GET: api/Plc
-        [HttpGet]
+        /*[HttpGet]
         public async Task<ActionResult<IEnumerable<ConfigOne>>> GetConfigsOne()
         {
             return await _context.ConfigsOne.ToListAsync();
         }
+*/
 
-
-        /*[HttpGet]
+        [HttpGet]
         public async Task<ActionResult> plc()
         {
             try
@@ -37,30 +37,26 @@ namespace PlcInterface.Controllers
                 var queries = HttpContext.Request.Query.ToDictionary(o => o.Key);
 
                 var BrokerId = queries["ID"].Value;
+                var machineId = queries["M1"].Value;
                 int type = (int)decimal.Parse(queries["T"].Value);
                 if (type == 1)
                 {
-                    var machine1 = queries["M1"].Value;
-                    var machine2 = queries["M2"].Value;
-                    var machine3 = queries["M3"].Value;
-                    var machine4 = queries["M4"].Value;
 
-                    int state1 = (int)decimal.Parse(queries["S1"].Value);
-                    int state2 = (int)decimal.Parse(queries["S2"].Value);
-                    int state3 = (int)decimal.Parse(queries["S3"].Value);
-                    int state4 = (int)decimal.Parse(queries["S4"].Value);
+                    int state = (int)decimal.Parse(queries["State"].Value);
+                    decimal fault = decimal.Parse(queries["Fault"].Value);
+                    decimal CO2 = decimal.Parse(queries["CO2"].Value);
+                    decimal H2O = decimal.Parse(queries["H2O"].Value);
+                    decimal SYRUP = decimal.Parse(queries["SYRUP"].Value);
                     var Timestamp = DateTime.Now;
-                    Reads reads = new Reads
+                    ConfigOne reads = new ConfigOne
                     {
                         BrokerId = BrokerId,
-                        MachineId1 = machine1,
-                        MachineId2 = machine2,
-                        MachineId3 = machine3,
-                        MachineId4 = machine4,
-                        state1 = state1,
-                        state2 = state2,
-                        state3 = state3,
-                        state4 = state4,
+                        MachineId=machineId,
+                        State = state,
+                        Fault = fault,
+                        Co2 = CO2,
+                        H2O = H2O,
+                        Syrp = SYRUP,
                         TimeStamp = Timestamp
                     };
                     _context.ConfigsOne.Add(reads);
@@ -69,43 +65,48 @@ namespace PlcInterface.Controllers
                 }
                 else if (type == 2)
                 {
-                    var machineId = queries["M1"].Value;
-
-                    int In = int.Parse(queries["IN"].Value);
-                    int Out = int.Parse(queries["OUT"].Value);
-                    int Diff = int.Parse(queries["DIFF"].Value);
+                    
+                    int state = (int)decimal.Parse(queries["State"].Value);
+                    decimal fault = decimal.Parse(queries["Fault"].Value);
+                    int Prod_Counter = (int)decimal.Parse(queries["Prod_Counter"].Value);
+                    decimal Prod_Speed = decimal.Parse(queries["Prod_Speed"].Value);
+                    decimal Mix_Volu = decimal.Parse(queries["Mix_Volu"].Value);
+                    int Program = (int)decimal.Parse(queries["Program"].Value);
                     var Timestamp = DateTime.Now;
-                    ReadsTypetwo reads = new ReadsTypetwo
+                    ConfigTwo reads = new ConfigTwo
                     {
                         BrokerId = BrokerId,
                         MachineId = machineId,
-                        In = In,
-                        Out = Out,
-                        Diff = Diff,
+                        State = state,
+                        Fault = fault,
+                        ProductionCount = Prod_Counter,
+                        ActualSpeed = Prod_Speed,
+                        MixVolume = Mix_Volu,
+                        ProgramSelection = Program,
                         TimeStamp = Timestamp
                     };
-                    _context.SignalBrokerTypeTwo.Add(reads);
+                    _context.ConfigsTwo.Add(reads);
                     await _context.SaveChangesAsync();
                     return Ok("ok");
                 }
                 else if (type == 3)
                 {
-                    var machineId = queries["M1"].Value;
-
-                    int In = int.Parse(queries["IN"].Value);
-                    int Out = int.Parse(queries["OUT"].Value);
-                    int Diff = int.Parse(queries["DIFF"].Value);
+                    int state = (int)decimal.Parse(queries["State"].Value);
+                    decimal fault = decimal.Parse(queries["Fault"].Value);
+                    int Pallet_Count = (int)decimal.Parse(queries["Pallet_Count"].Value);
+                    int Pack_Count = (int)decimal.Parse(queries["Pack_Count"].Value);
                     var Timestamp = DateTime.Now;
-                    ReadsTypetwo reads = new ReadsTypetwo
+                    ConfigThree reads = new ConfigThree
                     {
                         BrokerId = BrokerId,
                         MachineId = machineId,
-                        In = In,
-                        Out = Out,
-                        Diff = Diff,
+                        State = state,
+                        Fault = fault,
+                        PallateCount = Pallet_Count,
+                        PackCount = Pallet_Count,
                         TimeStamp = Timestamp
                     };
-                    _context.SignalBrokerTypeTwo.Add(reads);
+                    _context.ConfigsThree.Add(reads);
                     await _context.SaveChangesAsync();
                     return Ok("ok");
                 }
@@ -120,7 +121,7 @@ namespace PlcInterface.Controllers
             {
                 return Ok("ok" + e.Message);
             }
-        }*/
+        }
 
         // GET: api/Plc/5
         [HttpGet("{id}")]
