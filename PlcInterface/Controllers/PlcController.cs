@@ -72,6 +72,9 @@ namespace PlcInterface.Controllers
                     decimal Prod_Speed = decimal.Parse(queries["Prod_Speed"].Value);
                     decimal Mix_Volu = decimal.Parse(queries["Mix_Volu"].Value);
                     int Program = (int)decimal.Parse(queries["Program"].Value);
+                    int CO2 = (int)decimal.Parse(queries["CO2"].Value);
+                    int MachineMode = (int)decimal.Parse(queries["Mach_Mode"].Value);
+                    int Prod_Time = (int)decimal.Parse(queries["Prod_Time"].Value);
                     var Timestamp = DateTime.Now;
                     ConfigTwo reads = new ConfigTwo
                     {
@@ -83,6 +86,9 @@ namespace PlcInterface.Controllers
                         ActualSpeed = Prod_Speed,
                         MixVolume = Mix_Volu,
                         ProgramSelection = Program,
+                        CO2 = CO2,
+                        MachineMode = MachineMode,
+                        ProdTime=Prod_Time,
                         TimeStamp = Timestamp
                     };
                     _context.ConfigsTwo.Add(reads);
