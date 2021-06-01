@@ -9,9 +9,13 @@ namespace PlcInterface.Context
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<ConfigOne> ConfigsOne { get; set; }
-        public DbSet<ConfigTwo> ConfigsTwo { get; set; }
-        public DbSet<ConfigThree> ConfigsThree { get; set; }
+        public DbSet<ConfigOne> ConfigOne { get; set; }
+        public DbSet<ConfigTwo> ConfigTwo { get; set; }
+        public DbSet<ConfigThree> ConfigThree { get; set; }
+
+        public DbSet<Filler> Fillers { get; set; }
+        public DbSet<Palletizer> Palletizers { get; set; }
+        public DbSet<Blow_Moulder> Blow_Moulders { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 

@@ -36,83 +36,97 @@ namespace PlcInterface.Controllers
             {
                 var queries = HttpContext.Request.Query.ToDictionary(o => o.Key);
 
-                var BrokerId = queries["ID"].Value;
-                var machineId = queries["M1"].Value;
-                int type = (int)decimal.Parse(queries["T"].Value);
-                if (type == 1)
+                var machineId = queries["ID"].Value;
+                var type = queries["Type"].Value;
+                if (type == "Blow")
                 {
 
                     int state = (int)decimal.Parse(queries["State"].Value);
-                    decimal fault = decimal.Parse(queries["Fault"].Value);
-                    decimal CO2 = decimal.Parse(queries["CO2"].Value);
-                    decimal H2O = decimal.Parse(queries["H2O"].Value);
-                    decimal SYRUP = decimal.Parse(queries["SYRUP"].Value);
+                    int line = (int)decimal.Parse(queries["Line"].Value);
+                    int fault = (int)decimal.Parse(queries["Fault"].Value);
+                    var factory = queries["Factory"].Value;
+                    decimal speed = decimal.Parse(queries["Speed"].Value);
+                    int count_in = (int)decimal.Parse(queries["Count_In"].Value);
+                    int count_out = (int)decimal.Parse(queries["Count_Out"].Value);
+                    int hours = (int)decimal.Parse(queries["Hours"].Value);
+                    decimal Temp = decimal.Parse(queries["Temp"].Value);
+                    decimal Pressure = decimal.Parse(queries["Pressure"].Value);
                     var Timestamp = DateTime.Now;
-                    ConfigOne reads = new ConfigOne
+                    Blow_Moulder reads = new Blow_Moulder
                     {
-                        BrokerId = BrokerId,
                         MachineId=machineId,
                         State = state,
                         Fault = fault,
-                        Co2 = CO2,
-                        H2O = H2O,
-                        Syrp = SYRUP,
+                        Factory = factory,
+                        Line = line,
+                        Count_In = count_in,
+                        Count_Out = count_out,
+                        Pressure = Pressure,
+                        Temperature = Temp,
+                        Production_Hours = hours,
+                        Speed = speed,
                         TimeStamp = Timestamp
                     };
-                    _context.ConfigsOne.Add(reads);
+                    _context.Blow_Moulders.Add(reads);
                     await _context.SaveChangesAsync();
                     return Ok("ok");
                 }
-                else if (type == 2)
+                else if (type == "Fill")
                 {
-                    
+
                     int state = (int)decimal.Parse(queries["State"].Value);
-                    decimal fault = decimal.Parse(queries["Fault"].Value);
-                    int Prod_Counter = (int)decimal.Parse(queries["Prod_Counter"].Value);
-                    decimal Prod_Speed = decimal.Parse(queries["Prod_Speed"].Value);
-                    decimal Mix_Volu = decimal.Parse(queries["Mix_Volu"].Value);
-                    int Program = (int)decimal.Parse(queries["Program"].Value);
-                    int CO2 = (int)decimal.Parse(queries["CO2"].Value);
-                    int MachineMode = (int)decimal.Parse(queries["Mach_Mode"].Value);
-                    int Prod_Time = (int)decimal.Parse(queries["Prod_Time"].Value);
+                    int line = (int)decimal.Parse(queries["Line"].Value);
+                    int fault = (int)decimal.Parse(queries["Fault"].Value);
+                    var factory = queries["Factory"].Value;
+                    decimal speed = decimal.Parse(queries["Speed"].Value);
+                    int count = (int)decimal.Parse(queries["Count"].Value);
+                    int alarms = (int)decimal.Parse(queries["Alarms"].Value);
+                    int hours = (int)decimal.Parse(queries["Hours"].Value);
+                    decimal Mix_Vol = decimal.Parse(queries["Mix_vol"].Value);
+                    int Mix_select = (int)decimal.Parse(queries["Mix_select"].Value);
                     var Timestamp = DateTime.Now;
-                    ConfigTwo reads = new ConfigTwo
+                    Filler reads = new Filler
                     {
-                        BrokerId = BrokerId,
                         MachineId = machineId,
                         State = state,
                         Fault = fault,
-                        ProductionCount = Prod_Counter,
-                        ActualSpeed = Prod_Speed,
-                        MixVolume = Mix_Volu,
-                        ProgramSelection = Program,
-                        CO2 = CO2,
-                        MachineMode = MachineMode,
-                        ProdTime=Prod_Time,
+                        Factory = factory,
+                        Line = line,
+                        Count = count,
+                        Alarms = alarms,
+                        Mix_vol = Mix_Vol,
+                        Mix_select = Mix_select,
+                        Production_Hours = hours,
+                        Speed = speed,
                         TimeStamp = Timestamp
                     };
-                    _context.ConfigsTwo.Add(reads);
+                    _context.Fillers.Add(reads);
                     await _context.SaveChangesAsync();
                     return Ok("ok");
                 }
-                else if (type == 3)
+                else if (type == "Pall")
                 {
                     int state = (int)decimal.Parse(queries["State"].Value);
-                    decimal fault = decimal.Parse(queries["Fault"].Value);
-                    int Pallet_Count = (int)decimal.Parse(queries["Pallet_Count"].Value);
-                    int Pack_Count = (int)decimal.Parse(queries["Pack_Count"].Value);
+                    int line = (int)decimal.Parse(queries["Line"].Value);
+                    int fault = (int)decimal.Parse(queries["Fault"].Value);
+                    var factory = queries["Factory"].Value;
+                    int Pallet_Count = (int)decimal.Parse(queries["Pallet_No"].Value);
+                    int Pack_Count = (int)decimal.Parse(queries["Packet_No"].Value);
+                    int hours = (int)decimal.Parse(queries["Hours"].Value);
                     var Timestamp = DateTime.Now;
-                    ConfigThree reads = new ConfigThree
+                    Palletizer reads = new Palletizer
                     {
-                        BrokerId = BrokerId,
                         MachineId = machineId,
                         State = state,
                         Fault = fault,
-                        PallateCount = Pallet_Count,
-                        PackCount = Pallet_Count,
+                        Pallet_No = Pallet_Count,
+                        Packet_No = Pack_Count,
+                        Line =line,
+                        Production_Hours= hours,
+                        Factory = factory,
                         TimeStamp = Timestamp
                     };
-                    _context.ConfigsThree.Add(reads);
+                    _context.Palletizers.Add(reads);
                     await _context.SaveChangesAsync();
                     return Ok("ok");
                 }
@@ -133,7 +147,7 @@ namespace PlcInterface.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ConfigOne>> GetConfigOne(int id)
         {
-            var configOne = await _context.ConfigsOne.FindAsync(id);
+            var configOne = await _context.ConfigOne.FindAsync(id);
 
             if (configOne == null)
             {
@@ -181,7 +195,7 @@ namespace PlcInterface.Controllers
         [HttpPost]
         public async Task<ActionResult<ConfigOne>> PostConfigOne(ConfigOne configOne)
         {
-            _context.ConfigsOne.Add(configOne);
+            _context.ConfigOne.Add(configOne);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetConfigOne", new { id = configOne.Id }, configOne);
@@ -191,13 +205,13 @@ namespace PlcInterface.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<ConfigOne>> DeleteConfigOne(int id)
         {
-            var configOne = await _context.ConfigsOne.FindAsync(id);
+            var configOne = await _context.ConfigOne.FindAsync(id);
             if (configOne == null)
             {
                 return NotFound();
             }
 
-            _context.ConfigsOne.Remove(configOne);
+            _context.ConfigOne.Remove(configOne);
             await _context.SaveChangesAsync();
 
             return configOne;
@@ -205,7 +219,7 @@ namespace PlcInterface.Controllers
 
         private bool ConfigOneExists(int id)
         {
-            return _context.ConfigsOne.Any(e => e.Id == id);
+            return _context.Fillers.Any(e => e.Id == id);
         }
     }
 }

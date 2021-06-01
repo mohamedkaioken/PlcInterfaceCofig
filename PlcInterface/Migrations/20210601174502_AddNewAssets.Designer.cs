@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlcInterface.Context;
 
 namespace PlcInterface.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210601174502_AddNewAssets")]
+    partial class AddNewAssets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,9 +60,6 @@ namespace PlcInterface.Migrations
 
                     b.Property<decimal>("Temperature")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -224,9 +223,6 @@ namespace PlcInterface.Migrations
                     b.Property<int>("State")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.ToTable("Fillers");
@@ -260,11 +256,11 @@ namespace PlcInterface.Migrations
                     b.Property<int>("Production_Hours")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("Speed")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("State")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
