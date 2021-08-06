@@ -16,6 +16,10 @@ namespace PlcInterface.Context
         public DbSet<Filler> Fillers { get; set; }
         public DbSet<Palletizer> Palletizers { get; set; }
         public DbSet<Blow_Moulder> Blow_Moulders { get; set; }
+        public DbSet<Label> Labels { get; set; }
+        public DbSet<DPalletizer> DPalletizers { get; set; }
+        public DbSet<Mixer> Mixers { get; set; }
+        public DbSet<Cartonizer_Shrink> Cartonizers_Shrinks { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 

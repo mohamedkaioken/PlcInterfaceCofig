@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlcInterface.Context;
 
 namespace PlcInterface.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210706115532_AddLabelAndDPall")]
+    partial class AddLabelAndDPall
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,45 +67,6 @@ namespace PlcInterface.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Blow_Moulders");
-                });
-
-            modelBuilder.Entity("PlcInterface.Models.Cartonizer_Shrink", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int>("Counts")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Factory")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Fault")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Hours")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Line")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MachineId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Speed")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Cartonizers_Shrinks");
                 });
 
             modelBuilder.Entity("PlcInterface.Models.ConfigOne", b =>
@@ -230,7 +193,7 @@ namespace PlcInterface.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("Count")
+                    b.Property<int>("Counts")
                         .HasColumnType("int");
 
                     b.Property<string>("Factory")
@@ -272,9 +235,6 @@ namespace PlcInterface.Migrations
                     b.Property<int>("Alarms")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Co2_Consumption")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
@@ -297,9 +257,6 @@ namespace PlcInterface.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Production_Hours")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rinse")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Speed")
@@ -353,51 +310,6 @@ namespace PlcInterface.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Labels");
-                });
-
-            modelBuilder.Entity("PlcInterface.Models.Mixer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<decimal>("Co2_Consumption")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Factory")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Fault")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Line")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MachineId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Product_Consumption")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("Production_Hours")
-                        .HasColumnType("int");
-
-                    b.Property<int>("State")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("Syrup_Consumption")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Water_Consumption")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Mixers");
                 });
 
             modelBuilder.Entity("PlcInterface.Models.Palletizer", b =>

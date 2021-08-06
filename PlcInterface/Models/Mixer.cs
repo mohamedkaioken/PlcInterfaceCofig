@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace PlcInterface.Models
 {
-    public class Filler
+    public class Mixer
     {
         public int Id { get; set; }
         public string Factory { get; set; }
@@ -13,15 +13,12 @@ namespace PlcInterface.Models
         public string MachineId { get; set; }
         public int State { get; set; }
         public int Fault { get; set; }
-        public decimal Speed { get; set; }
-        public int Count { get; set; }
-        public decimal Mix_vol { get; set; }
-        public int Mix_select { get; set; }
-        public int Alarms { get; set; }
-        public int Production_Hours { get; set; }
-        public int Rinse { get; set; }
+        public decimal Product_Consumption { get; set; }
         public decimal Co2_Consumption { get; set; }
+        public decimal Water_Consumption { get; set; }
+        public decimal Syrup_Consumption { get; set; }
+        public int Production_Hours { get; set; }
         public DateTime TimeStamp { get; set; }
-
     }
 }
+

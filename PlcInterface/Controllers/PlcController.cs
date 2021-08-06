@@ -71,7 +71,34 @@ namespace PlcInterface.Controllers
                     await _context.SaveChangesAsync();
                     return Ok("ok");
                 }
-                else if (type == "Fill")
+                else if (type == "Dpal")
+                {
+
+                    int state = (int)decimal.Parse(queries["State"].Value);
+                    int line = (int)decimal.Parse(queries["Line"].Value);
+                    int fault = (int)decimal.Parse(queries["Fault"].Value);
+                    var factory = queries["Factory"].Value;
+                    decimal speed = decimal.Parse(queries["Speed"].Value);
+                    int Count = (int)decimal.Parse(queries["Count"].Value);
+                    int hours = (int)decimal.Parse(queries["Hours"].Value);
+                    var Timestamp = DateTime.Now;
+                    DPalletizer reads = new DPalletizer
+                    {
+                        MachineId = machineId,
+                        State = state,
+                        Fault = fault,
+                        Factory = factory,
+                        Line = line,
+                        Count = Count,
+                        Hours = hours,
+                        Speed = speed,
+                        TimeStamp = Timestamp
+                    };
+                    _context.DPalletizers.Add(reads);
+                    await _context.SaveChangesAsync();
+                    return Ok("ok");
+                }
+                else if (type == "Labl")
                 {
 
                     int state = (int)decimal.Parse(queries["State"].Value);
@@ -80,10 +107,66 @@ namespace PlcInterface.Controllers
                     var factory = queries["Factory"].Value;
                     decimal speed = decimal.Parse(queries["Speed"].Value);
                     int count = (int)decimal.Parse(queries["Count"].Value);
+                    int hours = (int)decimal.Parse(queries["Hours"].Value);
+                    var Timestamp = DateTime.Now;
+                    Label reads = new Label
+                    {
+                        MachineId = machineId,
+                        State = state,
+                        Fault = fault,
+                        Factory = factory,
+                        Line = line,
+                        Counts = count,
+                        Hours = hours,
+                        Speed = speed,
+                        TimeStamp = Timestamp
+                    };
+                    _context.Labels.Add(reads);
+                    await _context.SaveChangesAsync();
+                    return Ok("ok");
+                }
+                else if (type == "Cart" || type == "Shrink")
+                {
+
+                    int state = (int)decimal.Parse(queries["State"].Value);
+                    int line = (int)decimal.Parse(queries["Line"].Value);
+                    int fault = (int)decimal.Parse(queries["Fault"].Value);
+                    var factory = queries["Factory"].Value;
+                    decimal speed = decimal.Parse(queries["Speed"].Value);
+                    int count = (int)decimal.Parse(queries["Count"].Value);
+                    int hours = (int)decimal.Parse(queries["Hours"].Value);
+                    var Timestamp = DateTime.Now;
+                    Cartonizer_Shrink reads = new Cartonizer_Shrink
+                    {
+                        MachineId = machineId,
+                        State = state,
+                        Fault = fault,
+                        Factory = factory,
+                        Line = line,
+                        Counts = count,
+                        Hours = hours,
+                        Speed = speed,
+                        TimeStamp = Timestamp
+                    };
+                    _context.Cartonizers_Shrinks.Add(reads);
+                    await _context.SaveChangesAsync();
+                    return Ok("ok");
+                }
+                else if (type == "Fill")
+                {
+
+                    int state = (int)decimal.Parse(queries["State"].Value);
+                    int line = (int)decimal.Parse(queries["Line"].Value);
+                    int fault = (int)decimal.Parse(queries["Fault"].Value);
+                    var factory = queries["Factory"].Value;
+                    decimal speed = decimal.Parse(queries["Speed"].Value);
+                    decimal co2 = decimal.Parse(queries["Co2"].Value);
+                    int count = (int)decimal.Parse(queries["Count"].Value);
                     int alarms = (int)decimal.Parse(queries["Alarms"].Value);
                     int hours = (int)decimal.Parse(queries["Hours"].Value);
                     decimal Mix_Vol = decimal.Parse(queries["Mix_vol"].Value);
                     int Mix_select = (int)decimal.Parse(queries["Mix_select"].Value);
+                    int Rinse = (int)decimal.Parse(queries["Rinse"].Value);
                     var Timestamp = DateTime.Now;
                     Filler reads = new Filler
                     {
@@ -98,6 +181,8 @@ namespace PlcInterface.Controllers
                         Mix_select = Mix_select,
                         Production_Hours = hours,
                         Speed = speed,
+                        Rinse = Rinse,
+                       Co2_Consumption = co2,
                         TimeStamp = Timestamp
                     };
                     _context.Fillers.Add(reads);
@@ -127,6 +212,36 @@ namespace PlcInterface.Controllers
                         TimeStamp = Timestamp
                     };
                     _context.Palletizers.Add(reads);
+                    await _context.SaveChangesAsync();
+                    return Ok("ok");
+                }
+                else if(type == "Mixx")
+                {
+                    int state = (int)decimal.Parse(queries["State"].Value);
+                    int line = (int)decimal.Parse(queries["Line"].Value);
+                    int fault = (int)decimal.Parse(queries["Fault"].Value);
+                    var factory = queries["Factory"].Value;
+                    decimal Product = decimal.Parse(queries["Product"].Value);
+                    decimal Water = decimal.Parse(queries["Water"].Value);
+                    decimal Co2 = decimal.Parse(queries["Co2"].Value);
+                    decimal Syrup = decimal.Parse(queries["Syrup"].Value);
+                    int hours = (int)decimal.Parse(queries["Hours"].Value);
+                    var Timestamp = DateTime.Now;
+                    Mixer reads = new Mixer
+                    {
+                        MachineId = machineId,
+                        State = state,
+                        Fault = fault,
+                        Water_Consumption = Water,
+                        Co2_Consumption = Co2,
+                        Product_Consumption = Product,
+                        Syrup_Consumption = Syrup,
+                        Line = line,
+                        Production_Hours = hours,
+                        Factory = factory,
+                        TimeStamp = Timestamp
+                    };
+                    _context.Mixers.Add(reads);
                     await _context.SaveChangesAsync();
                     return Ok("ok");
                 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlcInterface.Context;
 
 namespace PlcInterface.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210801160916_AddCartonizer")]
+    partial class AddCartonizer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -230,14 +232,14 @@ namespace PlcInterface.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
                     b.Property<string>("Factory")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Fault")
                         .HasColumnType("int");
+
+                    b.Property<decimal>("Holder_Count")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Hours")
                         .HasColumnType("int");
@@ -247,6 +249,9 @@ namespace PlcInterface.Migrations
 
                     b.Property<string>("MachineId")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Pallet_Count")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Speed")
                         .HasColumnType("decimal(18,2)");
