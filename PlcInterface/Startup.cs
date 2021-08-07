@@ -27,7 +27,16 @@ namespace PlcInterface
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors();
+            services.Configure<IISServerOptions>(o =>
+            {
+                o.AllowSynchronousIO = true;
+            });
             services.AddDbContext<ApplicationDbContext>(p => p.UseSqlServer(Configuration.GetConnectionString("default")));
+            services.AddDbContext<MesContext>(p => p.UseSqlServer(Configuration.GetConnectionString("COCAMES")));
+            services.AddDbContext<EnergyContext>(p => p.UseSqlServer(Configuration.GetConnectionString("iotT")));
+            services.AddDbContext<EnergyReportContext>(p => p.UseSqlServer(Configuration.GetConnectionString("enRe")));
+            services.AddDbContext<SignalContext>(p => p.UseSqlServer(Configuration.GetConnectionString("signal")));
             services.AddCors();
 
             services.AddControllers();
@@ -42,7 +51,7 @@ namespace PlcInterface
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors(o => o.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().SetIsOriginAllowedToAllowWildcardSubdomains());
             app.UseRouting();
 
             app.UseAuthorization();
