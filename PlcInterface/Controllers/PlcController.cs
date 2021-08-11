@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlcInterface.Context;
 using PlcInterface.Models;
+using PlcInterface.Models.CocaMesModels;
 using PlcInterface.Models.DTO;
 
 namespace PlcInterface.Controllers
@@ -293,7 +294,11 @@ namespace PlcInterface.Controllers
                 img = "factory.svg",
             };
             var functions = _mContext.ProductionLines.Where(r => r.FactoryId == Factory).ToList();
-            var utilities = _mContext.Utilities.Where(r => r.FactoryId == Factory).ToList();
+            var boilers = _mContext.Boilers.Where(r => r.FactoryId == Factory).ToList();
+            var compressors = _mContext.Compressors.Where(r => r.FactoryId == Factory).ToList();
+            var waterPumps = _mContext.WaterPumps.Where(r => r.FactoryId == Factory).ToList();
+            var waterChems = _mContext.WaterChemicalTreatments.Where(r => r.FactoryId == Factory).ToList();
+            var tanks = _mContext.Tanks.Where(r => r.FactoryId == Factory).ToList();
             TreeDTO treeDTO4 = new TreeDTO
             {
                 name = "Production Lines",
@@ -304,6 +309,27 @@ namespace PlcInterface.Controllers
             TreeDTO treeDTO5 = new TreeDTO
             {
                 name = "Utilities",
+                id = 2,
+                code = "Utilities",
+                img = "factory.svg",
+            };
+            TreeDTO treeDTO6 = new TreeDTO
+            {
+                name = "Compressors",
+                id = 2,
+                code = "Utilities",
+                img = "factory.svg",
+            };
+            TreeDTO treeDTO7 = new TreeDTO
+            {
+                name = "Tanks",
+                id = 2,
+                code = "Utilities",
+                img = "factory.svg",
+            };
+            TreeDTO treeDTO8 = new TreeDTO
+            {
+                name = "Water",
                 id = 2,
                 code = "Utilities",
                 img = "factory.svg",
@@ -335,7 +361,7 @@ namespace PlcInterface.Controllers
                 treeDTO4.children.Add(treeDTO2);
             }
             treeDTO.children.Add(treeDTO4);
-            foreach (var uti in utilities)
+            foreach (var uti in boilers)
             {
                 TreeDTO treeDTO2 = new TreeDTO
                 {
@@ -345,7 +371,7 @@ namespace PlcInterface.Controllers
                     img = "function.svg",
                 };
 
-                var loads = _mContext.Loads.Where(r => r.UtilityId == uti.Id).Select(r => new { r.Id, r.EnergyCode, r.PlcCode, r.SignalCode, r.Name }).ToList();
+                var loads = _mContext.Loads.Where(r => r.BoilerId == uti.Id).Select(r => new { r.Id, r.EnergyCode, r.PlcCode, r.SignalCode, r.Name }).ToList();
                 foreach (var load in loads)
                 {
                     TreeDTO treeDTO3 = new TreeDTO
@@ -361,6 +387,113 @@ namespace PlcInterface.Controllers
                 }
                 treeDTO5.children.Add(treeDTO2);
             }
+            foreach (var uti in compressors)
+            {
+                TreeDTO treeDTO2 = new TreeDTO
+                {
+                    name = uti.Name,
+                    id = uti.Id,
+                    code = uti.Name,
+                    img = "function.svg",
+                };
+
+                var loads = _mContext.Loads.Where(r => r.CompressorId == uti.Id).Select(r => new { r.Id, r.EnergyCode, r.PlcCode, r.SignalCode, r.Name }).ToList();
+                foreach (var load in loads)
+                {
+                    TreeDTO treeDTO3 = new TreeDTO
+                    {
+                        name = load.Name,
+                        id = load.Id,
+                        energyCode = load.EnergyCode,
+                        plcCode = load.PlcCode,
+                        signalCode = load.SignalCode,
+                        img = "load.svg",
+                    };
+                    treeDTO2.children.Add(treeDTO3);
+                }
+                treeDTO6.children.Add(treeDTO2);
+            }
+            treeDTO5.children.Add(treeDTO6);
+            foreach (var uti in waterPumps)
+            {
+                TreeDTO treeDTO2 = new TreeDTO
+                {
+                    name = uti.Name,
+                    id = uti.Id,
+                    code = uti.Name,
+                    img = "function.svg",
+                };
+
+                var loads = _mContext.Loads.Where(r => r.WaterPumpId == uti.Id).Select(r => new { r.Id, r.EnergyCode, r.PlcCode, r.SignalCode, r.Name }).ToList();
+                foreach (var load in loads)
+                {
+                    TreeDTO treeDTO3 = new TreeDTO
+                    {
+                        name = load.Name,
+                        id = load.Id,
+                        energyCode = load.EnergyCode,
+                        plcCode = load.PlcCode,
+                        signalCode = load.SignalCode,
+                        img = "load.svg",
+                    };
+                    treeDTO2.children.Add(treeDTO3);
+                }
+                treeDTO8.children.Add(treeDTO2);
+            }
+            foreach (var uti in waterChems)
+            {
+                TreeDTO treeDTO2 = new TreeDTO
+                {
+                    name = uti.Name,
+                    id = uti.Id,
+                    code = uti.Name,
+                    img = "function.svg",
+                };
+
+                var loads = _mContext.Loads.Where(r => r.WaterChemicalTreatmentId == uti.Id).Select(r => new { r.Id, r.EnergyCode, r.PlcCode, r.SignalCode, r.Name }).ToList();
+                foreach (var load in loads)
+                {
+                    TreeDTO treeDTO3 = new TreeDTO
+                    {
+                        name = load.Name,
+                        id = load.Id,
+                        energyCode = load.EnergyCode,
+                        plcCode = load.PlcCode,
+                        signalCode = load.SignalCode,
+                        img = "load.svg",
+                    };
+                    treeDTO2.children.Add(treeDTO3);
+                }
+                treeDTO8.children.Add(treeDTO2);
+            }
+            treeDTO5.children.Add(treeDTO8);
+            foreach (var uti in tanks)
+            {
+                TreeDTO treeDTO2 = new TreeDTO
+                {
+                    name = uti.Name,
+                    id = uti.Id,
+                    code = uti.Name,
+                    img = "function.svg",
+                };
+
+                var loads = _mContext.Loads.Where(r => r.TankId == uti.Id).Select(r => new { r.Id, r.EnergyCode, r.PlcCode, r.SignalCode, r.Name }).ToList();
+                foreach (var load in loads)
+                {
+                    TreeDTO treeDTO3 = new TreeDTO
+                    {
+                        name = load.Name,
+                        id = load.Id,
+                        energyCode = load.EnergyCode,
+                        plcCode = load.PlcCode,
+                        signalCode = load.SignalCode,
+                        img = "load.svg",
+                    };
+                    treeDTO2.children.Add(treeDTO3);
+                }
+                treeDTO7.children.Add(treeDTO2);
+            }
+            treeDTO5.children.Add(treeDTO7);
             treeDTO.children.Add(treeDTO5);
             return Ok(treeDTO);
         }
@@ -2162,53 +2295,46 @@ namespace PlcInterface.Controllers
                 {
                     var from = DateTime.Today;
                     var to = DateTime.Now;
-                    if (Option == 1)
+                    if (Option == 1 || Option == 2 || Option == 3 || Option == 4 || Option == 5 || Option == 6)
                     {
                         List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                         var loadData = _sContext.SignalBroker.Where(r => r.BrokerId == Load && r.TimeStamp >= from && r.TimeStamp < to).ToList();
-                        var minuteCount = (to - from).TotalMinutes;
                         var load = _mContext.Loads.Where(r => r.EnergyCode == Load || r.SignalCode == Load || r.PlcCode == Load).FirstOrDefault();
-                        for (int i = 0; i < minuteCount; i += Resolution)
+                        foreach(var read in loadData)
                         {
-                            var currentTimeFrom = from.AddMinutes(i);
-                            var currentTimeTo = from.AddMinutes(i + Resolution);
-                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                            {
-
-                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
+                            
                                 PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
                                     Code = load.SignalCode,
                                     Name = load.Name,
                                 };
-                                if (energyTime.FirstOrDefault().MachineId1 != null)
+                                if (read.MachineId1 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
+                                    phase.Phase1 = read.state1;
 
                                 }
-                                else if (energyTime.FirstOrDefault().MachineId2 != null)
+                                else if (read.MachineId2 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
+                                    phase.Phase1 = read.state2;
 
                                 }
-                                else if (energyTime.FirstOrDefault().MachineId3 != null)
+                                else if (read.MachineId3 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
+                                    phase.Phase1 = read.state3;
 
                                 }
-                                else if (energyTime.FirstOrDefault().MachineId4 != null)
+                                else if (read.MachineId4 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
+                                    phase.Phase1 = read.state4;
 
                                 }
 
 
-                                phase.TimeStamp = currentTimeTo;
+                                phase.TimeStamp = read.TimeStamp;
 
                                 phaseValues.Add(phase);
 
-                            }
+                            
 
                         }
                         return Ok(phaseValues);
@@ -2218,53 +2344,46 @@ namespace PlcInterface.Controllers
                 {
                     var from = DateTime.Today.AddDays(-1);
                     var to = DateTime.Today;
-                    if (Option == 1)
+                    if (Option == 1 || Option == 2 || Option == 3 || Option == 4 || Option == 5 || Option == 6)
                     {
                         List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                         var loadData = _sContext.SignalBroker.Where(r => r.BrokerId == Load && r.TimeStamp >= from && r.TimeStamp < to).ToList();
-                        var minuteCount = (to - from).TotalMinutes;
                         var load = _mContext.Loads.Where(r => r.EnergyCode == Load || r.SignalCode == Load || r.PlcCode == Load).FirstOrDefault();
-                        for (int i = 0; i < minuteCount; i += Resolution)
+                        foreach (var read in loadData)
                         {
-                            var currentTimeFrom = from.AddMinutes(i);
-                            var currentTimeTo = from.AddMinutes(i + Resolution);
-                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
                             {
-
-                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
-                                PhaseValuesDTO phase = new PhaseValuesDTO
-                                {
-                                    Code = load.SignalCode,
-                                    Name = load.Name,
-                                };
-                                if (energyTime.FirstOrDefault().MachineId1 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
-
-                                }
-                                else if (energyTime.FirstOrDefault().MachineId2 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
-
-                                }
-                                else if (energyTime.FirstOrDefault().MachineId3 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
-
-                                }
-                                else if (energyTime.FirstOrDefault().MachineId4 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
-
-                                }
-
-
-                                phase.TimeStamp = currentTimeTo;
-
-                                phaseValues.Add(phase);
+                                Code = load.SignalCode,
+                                Name = load.Name,
+                            };
+                            if (read.MachineId1 != null)
+                            {
+                                phase.Phase1 = read.state1;
 
                             }
+                            else if (read.MachineId2 != null)
+                            {
+                                phase.Phase1 = read.state2;
+
+                            }
+                            else if (read.MachineId3 != null)
+                            {
+                                phase.Phase1 = read.state3;
+
+                            }
+                            else if (read.MachineId4 != null)
+                            {
+                                phase.Phase1 = read.state4;
+
+                            }
+
+
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
 
                         }
                         return Ok(phaseValues);
@@ -2274,53 +2393,46 @@ namespace PlcInterface.Controllers
                 {
                     var from = DateTime.Today.AddDays(-7);
                     var to = DateTime.Today;
-                    if (Option == 1)
+                    if (Option == 1 || Option == 2 || Option == 3 || Option == 4 || Option == 5 || Option == 6)
                     {
                         List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                         var loadData = _sContext.SignalBroker.Where(r => r.BrokerId == Load && r.TimeStamp >= from && r.TimeStamp < to).ToList();
-                        var minuteCount = (to - from).TotalMinutes;
                         var load = _mContext.Loads.Where(r => r.EnergyCode == Load || r.SignalCode == Load || r.PlcCode == Load).FirstOrDefault();
-                        for (int i = 0; i < minuteCount; i += Resolution)
+                        foreach (var read in loadData)
                         {
-                            var currentTimeFrom = from.AddMinutes(i);
-                            var currentTimeTo = from.AddMinutes(i + Resolution);
-                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
                             {
-
-                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
-                                PhaseValuesDTO phase = new PhaseValuesDTO
-                                {
-                                    Code = load.SignalCode,
-                                    Name = load.Name,
-                                };
-                                if (energyTime.FirstOrDefault().MachineId1 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
-
-                                }
-                                else if (energyTime.FirstOrDefault().MachineId2 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
-
-                                }
-                                else if (energyTime.FirstOrDefault().MachineId3 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
-
-                                }
-                                else if (energyTime.FirstOrDefault().MachineId4 != null)
-                                {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
-
-                                }
-
-
-                                phase.TimeStamp = currentTimeTo;
-
-                                phaseValues.Add(phase);
+                                Code = load.SignalCode,
+                                Name = load.Name,
+                            };
+                            if (read.MachineId1 != null)
+                            {
+                                phase.Phase1 = read.state1;
 
                             }
+                            else if (read.MachineId2 != null)
+                            {
+                                phase.Phase1 = read.state2;
+
+                            }
+                            else if (read.MachineId3 != null)
+                            {
+                                phase.Phase1 = read.state3;
+
+                            }
+                            else if (read.MachineId4 != null)
+                            {
+                                phase.Phase1 = read.state4;
+
+                            }
+
+
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
 
                         }
                         return Ok(phaseValues);
@@ -2352,22 +2464,22 @@ namespace PlcInterface.Controllers
                                 };
                                 if (energyTime.FirstOrDefault().MachineId1 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId2 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId3 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId4 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
 
                                 }
 
@@ -2408,22 +2520,22 @@ namespace PlcInterface.Controllers
                                 };
                                 if (energyTime.FirstOrDefault().MachineId1 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId2 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId3 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId4 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
 
                                 }
 
@@ -2464,22 +2576,22 @@ namespace PlcInterface.Controllers
                                 };
                                 if (energyTime.FirstOrDefault().MachineId1 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state1).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId2 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state2).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId3 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state3).FirstOrDefault();
 
                                 }
                                 else if (energyTime.FirstOrDefault().MachineId4 != null)
                                 {
-                                    phase.signal = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
+                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.state4).FirstOrDefault();
 
                                 }
 
@@ -2497,12 +2609,12 @@ namespace PlcInterface.Controllers
             }
             else if (loadEnergy.PlcCode != null)
             {
-                var mixerLoad = _context.Mixers.Where(r => r.MachineId == Load).FirstOrDefault();
-                var pallLoad = _context.Palletizers.Where(r => r.MachineId == Load).FirstOrDefault();
-                var fillLoad = _context.Fillers.Where(r => r.MachineId == Load).FirstOrDefault();
-                var dePalLoad = _context.DPalletizers.Where(r => r.MachineId == Load).FirstOrDefault();
-                var bmLoad = _context.Blow_Moulders.Where(r => r.MachineId == Load).FirstOrDefault();
-                var labelLoad = _context.Labels.Where(r => r.MachineId == Load).FirstOrDefault();
+                var mixerLoad = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load).FirstOrDefault();
+                var pallLoad = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load).FirstOrDefault();
+                var fillLoad = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load).FirstOrDefault();
+                var dePalLoad = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load).FirstOrDefault();
+                var bmLoad = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load).FirstOrDefault();
+                var labelLoad = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load).FirstOrDefault();
                 if(mixerLoad != null)
                 {
                     if(Duration == 1)
@@ -2511,18 +2623,13 @@ namespace PlcInterface.Controllers
                         var to = DateTime.Now;
                         if (Option == 1)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp<= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp<= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -2530,30 +2637,25 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r=>r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.State;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -2561,30 +2663,25 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Fault;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Product_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Product_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                              
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -2592,30 +2689,25 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = "L"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Product_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Product_Consumption;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Co2_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Co2_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -2623,30 +2715,25 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = "KG"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Co2_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Co2_Consumption;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Water_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Water_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -2654,30 +2741,25 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = "L"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Water_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Water_Consumption;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Syrup_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Syrup_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -2685,43 +2767,36 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = "L"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Syrup_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Syrup_Consumption;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 7)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Production_Hours;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
@@ -2730,220 +2805,183 @@ namespace PlcInterface.Controllers
                     else if (Duration == 2)
                     {
                         var from = DateTime.Today.AddDays(-1);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Product_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Product_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Product_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Product_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Co2_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Co2_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "KG"
+                                };
+                                phase.Phase1 = read.Co2_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "KG"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Co2_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Water_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Water_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Water_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Water_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Syrup_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Syrup_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Syrup_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Syrup_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 7)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -2952,220 +2990,183 @@ namespace PlcInterface.Controllers
                     else if (Duration == 3)
                     {
                         var from = DateTime.Today.AddDays(-7);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Product_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Product_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Product_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Product_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Co2_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Co2_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "KG"
+                                };
+                                phase.Phase1 = read.Co2_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "KG"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Co2_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Water_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Water_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Water_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Water_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Syrup_Consumption, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Syrup_Consumption, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Syrup_Consumption;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Syrup_Consumption).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 7)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -3180,155 +3181,121 @@ namespace PlcInterface.Controllers
                         var to = DateTime.Now;
                         if (Option == 1)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.State;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Fault;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Packet_No, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Packet_No, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Pack"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r=>r.Id).Select(r => r.Packet_No).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Packet_No;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Pallet_No, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Pallet_No, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
+                                
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Pallet"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Pallet_No).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Pallet_No;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Production_Hours;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
@@ -3337,158 +3304,124 @@ namespace PlcInterface.Controllers
                     else if (Duration == 2)
                     {
                         var from = DateTime.Today.AddDays(-1);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Packet_No, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Packet_No, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Pack"
+                                };
+                                phase.Phase1 = read.Packet_No;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Pack"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Packet_No).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Pallet_No, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Pallet_No, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Pallet"
+                                };
+                                phase.Phase1 = read.Pallet_No;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Pallet"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Pallet_No).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -3497,158 +3430,124 @@ namespace PlcInterface.Controllers
                     else if (Duration == 3)
                     {
                         var from = DateTime.Today.AddDays(-7);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Packet_No, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Packet_No, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Pack"
+                                };
+                                phase.Phase1 = read.Packet_No;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Pack"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Packet_No).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Palletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Pallet_No, r.TimeStamp }).ToList();
+                            var loadData = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Pallet_No, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Pallet"
+                                };
+                                phase.Phase1 = read.Pallet_No;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Pallet"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Pallet_No).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Mixers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -3663,18 +3562,13 @@ namespace PlcInterface.Controllers
                         var to = DateTime.Now;
                         if (Option == 1)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -3682,61 +3576,49 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.State;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
+                               
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Fault;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
 
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
@@ -3744,43 +3626,36 @@ namespace PlcInterface.Controllers
                                         Name = load.Name,
                                         Unit = "bottle/H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Speed;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                                var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                                var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
                                 List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                                 var minuteCount = (to - from).TotalMinutes;
                                 var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                                for (int i = 0; i < minuteCount; i += Resolution)
+                                foreach(var read in loadData)
                                 {
-                                    var currentTimeFrom = from.AddMinutes(i);
-                                    var currentTimeTo = from.AddMinutes(i + Resolution);
-                                    if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                    {
-
-                                        var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                         PhaseValuesDTO phase = new PhaseValuesDTO
                                         {
                                             Code = load.PlcCode,
                                             Name = load.Name,
                                             Unit = "Bottle"
                                         };
-                                        phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count).FirstOrDefault();
-                                        phase.TimeStamp = currentTimeTo;
+                                        phase.Phase1 = read.Count;
+                                        phase.TimeStamp = read.TimeStamp;
 
                                         phaseValues.Add(phase);
 
-                                    }
+                                    
 
                                 }
                                 return Ok(phaseValues);
@@ -3790,31 +3665,24 @@ namespace PlcInterface.Controllers
                         {
                             if(Load == "AlFill5")
                             {
-                                    var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_vol, r.TimeStamp }).ToList();
+                                    var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_vol, r.TimeStamp }).ToList();
                                     List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                                     var minuteCount = (to - from).TotalMinutes;
                                     var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                                    for (int i = 0; i < minuteCount; i += Resolution)
+                                    foreach(var read in loadData)
                                     {
-                                        var currentTimeFrom = from.AddMinutes(i);
-                                        var currentTimeTo = from.AddMinutes(i + Resolution);
-                                        if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                        {
-
-                                            var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                             PhaseValuesDTO phase = new PhaseValuesDTO
                                             {
                                                 Code = load.PlcCode,
                                                 Name = load.Name,
                                                 Unit = "L"
                                             };
-                                            phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Mix_vol).FirstOrDefault();
-                                            phase.TimeStamp = currentTimeTo;
+                                            phase.Phase1 = read.Mix_vol;
+                                            phase.TimeStamp = read.TimeStamp;
 
                                             phaseValues.Add(phase);
 
-                                        }
+                                        
 
                                     }
                                     return Ok(phaseValues);
@@ -3822,31 +3690,25 @@ namespace PlcInterface.Controllers
                             }
                             else
                             {
-                                var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_select, r.TimeStamp }).ToList();
+                                var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_select, r.TimeStamp }).ToList();
                                 List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                                 var minuteCount = (to - from).TotalMinutes;
                                 var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                                for (int i = 0; i < minuteCount; i += Resolution)
+                                foreach(var read in loadData)
                                 {
-                                    var currentTimeFrom = from.AddMinutes(i);
-                                    var currentTimeTo = from.AddMinutes(i + Resolution);
-                                    if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                    {
-
-                                        var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
+                                   
                                         PhaseValuesDTO phase = new PhaseValuesDTO
                                         {
                                             Code = load.PlcCode,
                                             Name = load.Name,
                                             Unit = ""
                                         };
-                                        phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Mix_select).FirstOrDefault();
-                                        phase.TimeStamp = currentTimeTo;
+                                        phase.Phase1 = read.Mix_select;
+                                        phase.TimeStamp = read.TimeStamp;
 
                                         phaseValues.Add(phase);
 
-                                    }
+                                    
 
                                 }
                                 return Ok(phaseValues);
@@ -3855,62 +3717,49 @@ namespace PlcInterface.Controllers
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
+                              
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Production_Hours;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 7)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Rinse, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Rinse, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "L"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Rinse).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Rinse;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
@@ -3919,127 +3768,103 @@ namespace PlcInterface.Controllers
                     else if (Duration == 2)
                     {
                         var from = DateTime.Today.AddDays(-1);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
-
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle"
+                                };
+                                phase.Phase1 = read.Count;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -4049,31 +3874,24 @@ namespace PlcInterface.Controllers
                         {
                             if (Load == "AlFill5")
                             {
-                                var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_vol, r.TimeStamp }).ToList();
+                                var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_vol, r.TimeStamp }).ToList();
                                 List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                                 var minuteCount = (to - from).TotalMinutes;
                                 var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                                for (int i = 0; i < minuteCount; i += Resolution)
+                                foreach (var read in loadData)
                                 {
-                                    var currentTimeFrom = from.AddMinutes(i);
-                                    var currentTimeTo = from.AddMinutes(i + Resolution);
-                                    if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                    PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
+                                        Code = load.PlcCode,
+                                        Name = load.Name,
+                                        Unit = "L"
+                                    };
+                                    phase.Phase1 = read.Mix_vol;
+                                    phase.TimeStamp = read.TimeStamp;
 
-                                        var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                    phaseValues.Add(phase);
 
-                                        PhaseValuesDTO phase = new PhaseValuesDTO
-                                        {
-                                            Code = load.PlcCode,
-                                            Name = load.Name,
-                                            Unit = "L"
-                                        };
-                                        phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Mix_vol).FirstOrDefault();
-                                        phase.TimeStamp = currentTimeTo;
 
-                                        phaseValues.Add(phase);
-
-                                    }
 
                                 }
                                 return Ok(phaseValues);
@@ -4081,31 +3899,25 @@ namespace PlcInterface.Controllers
                             }
                             else
                             {
-                                var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_select, r.TimeStamp }).ToList();
+                                var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_select, r.TimeStamp }).ToList();
                                 List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                                 var minuteCount = (to - from).TotalMinutes;
                                 var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                                for (int i = 0; i < minuteCount; i += Resolution)
+                                foreach (var read in loadData)
                                 {
-                                    var currentTimeFrom = from.AddMinutes(i);
-                                    var currentTimeTo = from.AddMinutes(i + Resolution);
-                                    if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                    PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
+                                        Code = load.PlcCode,
+                                        Name = load.Name,
+                                        Unit = ""
+                                    };
+                                    phase.Phase1 = read.Mix_select;
+                                    phase.TimeStamp = read.TimeStamp;
 
-                                        var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                    phaseValues.Add(phase);
 
-                                        PhaseValuesDTO phase = new PhaseValuesDTO
-                                        {
-                                            Code = load.PlcCode,
-                                            Name = load.Name,
-                                            Unit = ""
-                                        };
-                                        phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Mix_select).FirstOrDefault();
-                                        phase.TimeStamp = currentTimeTo;
 
-                                        phaseValues.Add(phase);
-
-                                    }
 
                                 }
                                 return Ok(phaseValues);
@@ -4114,62 +3926,49 @@ namespace PlcInterface.Controllers
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 7)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Rinse, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Rinse, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Rinse;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Rinse).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -4178,127 +3977,103 @@ namespace PlcInterface.Controllers
                     else if (Duration == 3)
                     {
                         var from = DateTime.Today.AddDays(-7);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
-
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle"
+                                };
+                                phase.Phase1 = read.Count;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -4308,31 +4083,24 @@ namespace PlcInterface.Controllers
                         {
                             if (Load == "AlFill5")
                             {
-                                var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_vol, r.TimeStamp }).ToList();
+                                var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_vol, r.TimeStamp }).ToList();
                                 List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                                 var minuteCount = (to - from).TotalMinutes;
                                 var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                                for (int i = 0; i < minuteCount; i += Resolution)
+                                foreach (var read in loadData)
                                 {
-                                    var currentTimeFrom = from.AddMinutes(i);
-                                    var currentTimeTo = from.AddMinutes(i + Resolution);
-                                    if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                    PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
+                                        Code = load.PlcCode,
+                                        Name = load.Name,
+                                        Unit = "L"
+                                    };
+                                    phase.Phase1 = read.Mix_vol;
+                                    phase.TimeStamp = read.TimeStamp;
 
-                                        var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                    phaseValues.Add(phase);
 
-                                        PhaseValuesDTO phase = new PhaseValuesDTO
-                                        {
-                                            Code = load.PlcCode,
-                                            Name = load.Name,
-                                            Unit = "L"
-                                        };
-                                        phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Mix_vol).FirstOrDefault();
-                                        phase.TimeStamp = currentTimeTo;
 
-                                        phaseValues.Add(phase);
-
-                                    }
 
                                 }
                                 return Ok(phaseValues);
@@ -4340,31 +4108,25 @@ namespace PlcInterface.Controllers
                             }
                             else
                             {
-                                var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_select, r.TimeStamp }).ToList();
+                                var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_select, r.TimeStamp }).ToList();
                                 List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                                 var minuteCount = (to - from).TotalMinutes;
                                 var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                                for (int i = 0; i < minuteCount; i += Resolution)
+                                foreach (var read in loadData)
                                 {
-                                    var currentTimeFrom = from.AddMinutes(i);
-                                    var currentTimeTo = from.AddMinutes(i + Resolution);
-                                    if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                    PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
+                                        Code = load.PlcCode,
+                                        Name = load.Name,
+                                        Unit = ""
+                                    };
+                                    phase.Phase1 = read.Mix_select;
+                                    phase.TimeStamp = read.TimeStamp;
 
-                                        var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                    phaseValues.Add(phase);
 
-                                        PhaseValuesDTO phase = new PhaseValuesDTO
-                                        {
-                                            Code = load.PlcCode,
-                                            Name = load.Name,
-                                            Unit = ""
-                                        };
-                                        phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Mix_select).FirstOrDefault();
-                                        phase.TimeStamp = currentTimeTo;
 
-                                        phaseValues.Add(phase);
-
-                                    }
 
                                 }
                                 return Ok(phaseValues);
@@ -4373,62 +4135,49 @@ namespace PlcInterface.Controllers
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 7)
                         {
-                            var loadData = _context.Fillers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Rinse, r.TimeStamp }).ToList();
+                            var loadData = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Rinse, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Rinse;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "L"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Rinse).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -4443,155 +4192,120 @@ namespace PlcInterface.Controllers
                         var to = DateTime.Now;
                         if (Option == 1)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.State;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Fault;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Bottle/H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Speed;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Bottle"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Count;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Hours;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
@@ -4600,158 +4314,123 @@ namespace PlcInterface.Controllers
                     else if (Duration == 2)
                     {
                         var from = DateTime.Today.AddDays(-1);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle"
+                                };
+                                phase.Phase1 = read.Count;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -4760,158 +4439,123 @@ namespace PlcInterface.Controllers
                     else if (Duration == 3)
                     {
                         var from = DateTime.Today.AddDays(-7);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle"
+                                };
+                                phase.Phase1 = read.Count;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.DPalletizers.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -4926,155 +4570,120 @@ namespace PlcInterface.Controllers
                         var to = DateTime.Now;
                         if (Option == 1)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.State;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Fault;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Bottle/H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Speed;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Counts, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Counts, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Bottle"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Counts).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Counts;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Hours;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
@@ -5083,158 +4692,123 @@ namespace PlcInterface.Controllers
                     else if (Duration == 2)
                     {
                         var from = DateTime.Today.AddDays(-1);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Counts, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Counts, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle"
+                                };
+                                phase.Phase1 = read.Counts;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Counts).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -5243,158 +4817,123 @@ namespace PlcInterface.Controllers
                     else if (Duration == 3)
                     {
                         var from = DateTime.Today.AddDays(-7);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Counts, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Counts, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle"
+                                };
+                                phase.Phase1 = read.Counts;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Counts).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Labels.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -5409,186 +4948,144 @@ namespace PlcInterface.Controllers
                         var to = DateTime.Now;
                         if (Option == 1)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.State;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = ""
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Fault;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Bottle/H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Speed;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_In, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_In, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Proform"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count_In).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Count_In;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_Out, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_Out, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "Proform"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count_Out).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Count_Out;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                                
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach(var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
-                                {
-
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
-
                                     PhaseValuesDTO phase = new PhaseValuesDTO
                                     {
                                         Code = load.PlcCode,
                                         Name = load.Name,
                                         Unit = "H"
                                     };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
+                                    phase.Phase1 = read.Production_Hours;
+                                    phase.TimeStamp = read.TimeStamp;
 
                                     phaseValues.Add(phase);
 
-                                }
+                               
 
                             }
                             return Ok(phaseValues);
@@ -5597,189 +5094,147 @@ namespace PlcInterface.Controllers
                     else if (Duration == 2)
                     {
                         var from = DateTime.Today.AddDays(-1);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_In, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_In, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Proform"
+                                };
+                                phase.Phase1 = read.Count_In;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Proform"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count_In).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_Out, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_Out, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Proform"
+                                };
+                                phase.Phase1 = read.Count_Out;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Proform"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count_Out).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -5788,189 +5243,147 @@ namespace PlcInterface.Controllers
                     else if (Duration == 3)
                     {
                         var from = DateTime.Today.AddDays(-7);
-                        var to = DateTime.Now;
+                        var to = DateTime.Today;
                         if (Option == 1)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.State;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.State).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 2)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Fault;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = ""
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Fault).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 5)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Bottle/H"
+                                };
+                                phase.Phase1 = read.Speed;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Bottle/H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Speed).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 3)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_In, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_In, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Proform"
+                                };
+                                phase.Phase1 = read.Count_In;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Proform"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count_In).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 4)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_Out, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_Out, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "Proform"
+                                };
+                                phase.Phase1 = read.Count_Out;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "Proform"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Count_Out).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
                         }
                         else if (Option == 6)
                         {
-                            var loadData = _context.Blow_Moulders.Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                            var loadData = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
                             List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
                             var minuteCount = (to - from).TotalMinutes;
                             var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
-                            for (int i = 0; i < minuteCount; i += Resolution)
+                            foreach (var read in loadData)
                             {
-                                var currentTimeFrom = from.AddMinutes(i);
-                                var currentTimeTo = from.AddMinutes(i + Resolution);
-                                if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                                PhaseValuesDTO phase = new PhaseValuesDTO
                                 {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "H"
+                                };
+                                phase.Phase1 = read.Production_Hours;
+                                phase.TimeStamp = read.TimeStamp;
 
-                                    var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+                                phaseValues.Add(phase);
 
-                                    PhaseValuesDTO phase = new PhaseValuesDTO
-                                    {
-                                        Code = load.PlcCode,
-                                        Name = load.Name,
-                                        Unit = "H"
-                                    };
-                                    phase.Phase1 = energyTime.OrderByDescending(r => r.Id).Select(r => r.Production_Hours).FirstOrDefault();
-                                    phase.TimeStamp = currentTimeTo;
 
-                                    phaseValues.Add(phase);
-
-                                }
 
                             }
                             return Ok(phaseValues);
@@ -5982,6 +5395,1936 @@ namespace PlcInterface.Controllers
             return Ok();
         }
 
+
+        [HttpGet("ValueOfTree/{Load}/{Option}/{From}/{To}/{Resolution}")]
+        public ActionResult ValueOfTreeDate(string Load, int Option, string From, string To, int Resolution)
+        {
+            var loadEnergy = _mContext.Loads.Where(r => r.EnergyCode == Load || r.SignalCode == Load || r.PlcCode == Load).FirstOrDefault();
+            if (loadEnergy.EnergyCode != null)
+            {
+                
+                    var from = DateTime.Parse(From);
+                    var to = DateTime.Parse(To);
+                    if (Option == 1)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.I1, r.I2, r.I3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name,
+                                    Unit = "Amper"
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.I1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.I2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.I3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 2)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.V1, r.V2, r.V3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name,
+                                    Unit = "Voltage"
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.V1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.V2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.V3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 3)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.PF1, r.PF2, r.PF3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.PF1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.PF2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.PF3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 4)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.Pact1, r.Pact2, r.Pact3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name,
+                                    Unit = "KWH"
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.Pact1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.Pact2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.Pact3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 5)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.Preact1, r.Preact2, r.Preact3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name,
+                                    Unit = "KVAR"
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.Preact1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.Preact2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.Preact3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 6)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.Papp1, r.Papp2, r.Papp3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name,
+                                    Unit = "KVA"
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.Papp1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.Papp2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.Papp3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 7)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.Energy1, r.Energy2, r.Energy3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name,
+                                    Unit = "KWH"
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.Energy1).DefaultIfEmpty(0).Sum();
+                                phase.Phase2 = energyTime.Select(r => r.Energy2).DefaultIfEmpty(0).Sum();
+                                phase.Phase3 = energyTime.Select(r => r.Energy3).DefaultIfEmpty(0).Sum();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 8)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.THDi1, r.THDi2, r.THDi3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.THDi1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.THDi2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.THDi3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 9)
+                    {
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var loadData = _eContext.IotTransactions.Where(r => r.SourceId == Load && r.TimeStamp >= from && r.TimeStamp < to).Select(r => new { r.Id, r.THDv1, r.THDv2, r.THDv3, r.TimeStamp }).ToList();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.EnergyCode == Load).FirstOrDefault();
+                        for (int i = 0; i < minuteCount; i += Resolution)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + Resolution);
+                            if (loadData.Any(r => r.TimeStamp >= currentTimeFrom && r.TimeStamp <= currentTimeTo))
+                            {
+
+                                var energyTime = loadData.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo);
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.EnergyCode,
+                                    Name = load.Name
+                                };
+                                phase.Phase1 = energyTime.Select(r => r.THDv1).DefaultIfEmpty(0).Average();
+                                phase.Phase2 = energyTime.Select(r => r.THDv2).DefaultIfEmpty(0).Average();
+                                phase.Phase3 = energyTime.Select(r => r.THDv3).DefaultIfEmpty(0).Average();
+                                phase.TimeStamp = currentTimeTo;
+
+                                phaseValues.Add(phase);
+
+                            }
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                
+                
+            }
+            else if (loadEnergy.SignalCode != null)
+            {
+               
+                    var from = DateTime.Parse(From);
+                    var to = DateTime.Parse(To);
+                if (Option == 1)
+                {
+                    List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                    var loadData = _sContext.SignalBroker.Where(r => r.BrokerId == Load && r.TimeStamp >= from && r.TimeStamp < to).ToList();
+                    var load = _mContext.Loads.Where(r => r.EnergyCode == Load || r.SignalCode == Load || r.PlcCode == Load).FirstOrDefault();
+                    foreach (var read in loadData)
+                    {
+
+                        PhaseValuesDTO phase = new PhaseValuesDTO
+                        {
+                            Code = load.SignalCode,
+                            Name = load.Name,
+                        };
+                        if (read.MachineId1 != null)
+                        {
+                            phase.Phase1 = read.state1;
+
+                        }
+                        else if (read.MachineId2 != null)
+                        {
+                            phase.Phase1 = read.state2;
+
+                        }
+                        else if (read.MachineId3 != null)
+                        {
+                            phase.Phase1 = read.state3;
+
+                        }
+                        else if (read.MachineId4 != null)
+                        {
+                            phase.Phase1 = read.state4;
+
+                        }
+
+
+                        phase.TimeStamp = read.TimeStamp;
+
+                        phaseValues.Add(phase);
+
+
+
+                    }
+                    return Ok(phaseValues);
+                }
+
+            }
+            else if (loadEnergy.PlcCode != null)
+            {
+                var mixerLoad = _context.Mixers.Where(r => r.MachineId == Load).FirstOrDefault();
+                var pallLoad = _context.Palletizers.Where(r => r.MachineId == Load).FirstOrDefault();
+                var fillLoad = _context.Fillers.Where(r => r.MachineId == Load).FirstOrDefault();
+                var dePalLoad = _context.DPalletizers.Where(r => r.MachineId == Load).FirstOrDefault();
+                var bmLoad = _context.Blow_Moulders.Where(r => r.MachineId == Load).FirstOrDefault();
+                var labelLoad = _context.Labels.Where(r => r.MachineId == Load).FirstOrDefault();
+                if (mixerLoad != null)
+                {
+                        var from = DateTime.Parse(From);
+                        var to = DateTime.Parse(To);
+                    if (Option == 1)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.State;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 2)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.Fault;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 3)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Product_Consumption, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "L"
+                            };
+                            phase.Phase1 = read.Product_Consumption;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 4)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Co2_Consumption, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "KG"
+                            };
+                            phase.Phase1 = read.Co2_Consumption;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 5)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Water_Consumption, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "L"
+                            };
+                            phase.Phase1 = read.Water_Consumption;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 6)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Syrup_Consumption, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "L"
+                            };
+                            phase.Phase1 = read.Syrup_Consumption;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 7)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "H"
+                            };
+                            phase.Phase1 = read.Production_Hours;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+
+                }
+                else if (pallLoad != null)
+                {
+                        var from = DateTime.Parse(From);
+                        var to = DateTime.Parse(To);
+                    if (Option == 1)
+                    {
+                        var loadData = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.State;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 2)
+                    {
+                        var loadData = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.Fault;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 3)
+                    {
+                        var loadData = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Packet_No, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Pack"
+                            };
+                            phase.Phase1 = read.Packet_No;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 4)
+                    {
+                        var loadData = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Pallet_No, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Pallet"
+                            };
+                            phase.Phase1 = read.Pallet_No;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 5)
+                    {
+                        var loadData = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "H"
+                            };
+                            phase.Phase1 = read.Production_Hours;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+
+                }
+                else if (fillLoad != null)
+                {
+                        var from = DateTime.Parse(From);
+                        var to = DateTime.Parse(To);
+                    if (Option == 1)
+                    {
+                        var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.State;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 2)
+                    {
+                        var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.Fault;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 3)
+                    {
+                        var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "bottle/H"
+                            };
+                            phase.Phase1 = read.Speed;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 4)
+                    {
+                        var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Bottle"
+                            };
+                            phase.Phase1 = read.Count;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+
+                    }
+                    else if (Option == 5)
+                    {
+                        if (Load == "AlFill5")
+                        {
+                            var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_vol, r.TimeStamp }).ToList();
+                            List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                            var minuteCount = (to - from).TotalMinutes;
+                            var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                            foreach (var read in loadData)
+                            {
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = "L"
+                                };
+                                phase.Phase1 = read.Mix_vol;
+                                phase.TimeStamp = read.TimeStamp;
+
+                                phaseValues.Add(phase);
+
+
+
+                            }
+                            return Ok(phaseValues);
+
+                        }
+                        else
+                        {
+                            var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Mix_select, r.TimeStamp }).ToList();
+                            List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                            var minuteCount = (to - from).TotalMinutes;
+                            var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                            foreach (var read in loadData)
+                            {
+
+                                PhaseValuesDTO phase = new PhaseValuesDTO
+                                {
+                                    Code = load.PlcCode,
+                                    Name = load.Name,
+                                    Unit = ""
+                                };
+                                phase.Phase1 = read.Mix_select;
+                                phase.TimeStamp = read.TimeStamp;
+
+                                phaseValues.Add(phase);
+
+
+
+                            }
+                            return Ok(phaseValues);
+
+                        }
+                    }
+                    else if (Option == 6)
+                    {
+                        var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "H"
+                            };
+                            phase.Phase1 = read.Production_Hours;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 7)
+                    {
+                        var loadData = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Rinse, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "L"
+                            };
+                            phase.Phase1 = read.Rinse;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+
+                }
+                else if (dePalLoad != null)
+                {
+                        var from = DateTime.Parse(From);
+                        var to = DateTime.Parse(To);
+                    if (Option == 1)
+                    {
+                        var loadData = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.State;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 2)
+                    {
+                        var loadData = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.Fault;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 3)
+                    {
+                        var loadData = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Bottle/H"
+                            };
+                            phase.Phase1 = read.Speed;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 5)
+                    {
+                        var loadData = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Bottle"
+                            };
+                            phase.Phase1 = read.Count;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 4)
+                    {
+                        var loadData = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "H"
+                            };
+                            phase.Phase1 = read.Hours;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+
+                }
+                else if (labelLoad != null)
+                {
+                  
+                        var from = DateTime.Parse(From);
+                        var to = DateTime.Parse(To);
+                    if (Option == 1)
+                    {
+                        var loadData = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.State;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 2)
+                    {
+                        var loadData = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.Fault;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 3)
+                    {
+                        var loadData = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Bottle/H"
+                            };
+                            phase.Phase1 = read.Speed;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 5)
+                    {
+                        var loadData = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Counts, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Bottle"
+                            };
+                            phase.Phase1 = read.Counts;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 4)
+                    {
+                        var loadData = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Hours, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "H"
+                            };
+                            phase.Phase1 = read.Hours;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+
+                }
+                else if (bmLoad != null)
+                {
+                        var from = DateTime.Parse(From);
+                        var to = DateTime.Parse(To);
+                    if (Option == 1)
+                    {
+                        var loadData = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.State, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.State;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 2)
+                    {
+                        var loadData = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Fault, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = ""
+                            };
+                            phase.Phase1 = read.Fault;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 5)
+                    {
+                        var loadData = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Speed, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Bottle/H"
+                            };
+                            phase.Phase1 = read.Speed;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 3)
+                    {
+                        var loadData = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_In, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Proform"
+                            };
+                            phase.Phase1 = read.Count_In;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 4)
+                    {
+                        var loadData = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Count_Out, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "Proform"
+                            };
+                            phase.Phase1 = read.Count_Out;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+                    else if (Option == 6)
+                    {
+                        var loadData = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == Load && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => new { r.Id, r.Production_Hours, r.TimeStamp }).ToList();
+                        List<PhaseValuesDTO> phaseValues = new List<PhaseValuesDTO>();
+                        var minuteCount = (to - from).TotalMinutes;
+                        var load = _mContext.Loads.Where(r => r.PlcCode == Load).FirstOrDefault();
+                        foreach (var read in loadData)
+                        {
+                            PhaseValuesDTO phase = new PhaseValuesDTO
+                            {
+                                Code = load.PlcCode,
+                                Name = load.Name,
+                                Unit = "H"
+                            };
+                            phase.Phase1 = read.Production_Hours;
+                            phase.TimeStamp = read.TimeStamp;
+
+                            phaseValues.Add(phase);
+
+
+
+                        }
+                        return Ok(phaseValues);
+                    }
+
+                }
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("GetMixerReads/{load}")]
+        public ActionResult GetMixerReads(string load)
+        {
+            var from = ((DateTime.Today).AddHours(8)).AddMinutes(10);
+            var to = ((DateTime.Today).AddHours(20)).AddMinutes(10);
+            var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load && r.Co2_Consumption >= 0 && r.Co2_Consumption < 100 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
+            return Ok(mixerReads2);
+        }
+
+        [HttpGet("GetMachineDetails/{time}")]
+        public ActionResult GetMachineDetails(int time)
+        {
+            var loads = _mContext.Loads.Where(r=>r.PlcCode != null).ToList();
+            if(time == 1)
+            {
+                var from = ((DateTime.Today).AddHours(8)).AddMinutes(10);
+                var to = ((DateTime.Today).AddHours(19)).AddMinutes(50);
+                List<MachineDetailsDTO> machines = new List<MachineDetailsDTO>();
+                var energyConsumption = _eContext.IotTransactions.Where(r => r.SourceId == "L_Line02_0" && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => r.Energy1 + r.Energy2 + r.Energy3).ToList().DefaultIfEmpty(0).Sum();
+                MachineDetailsDTO factory = new MachineDetailsDTO
+                {
+                    MachineName="Alex(API)",
+                    MachineCode="Alex",
+                    PlcType = "1"
+                };
+                foreach (var load in loads)
+                {
+                    var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0 && r.Co2_Consumption<100&& r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
+                    
+                    var mixerReads = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0&& r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp<=to).ToList();
+                    if (mixerReads2.Any())
+                    {
+                       mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+
+                    var pallReads2 = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No == 0 && r.Pallet_No<=100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var pallReads = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (pallReads2.Any())
+                    {
+                        pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var fillReads2 = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count ==0 && r.Count<=100 &&r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var fillReads = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >=0 &&r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    if(fillReads2.Any())
+                    {
+                        fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+
+                    }
+
+                    var dePallReads2 = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    if(dePallReads2.Any())
+                    {
+                        dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var labelReads2 = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var labelReads = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    if(labelReads2.Any())
+                    {
+                        labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var blowReads2 = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if(blowReads2.Any())
+                    {
+                        blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    decimal co2 = 0;
+                    decimal water = 0;
+                    decimal syrup = 0;
+                    decimal pallet = 0;
+                    decimal pack = 0;
+                    decimal bottle = 0;
+                    if (mixerReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Mixer"
+
+                        };
+                        var stateReadsCount = mixerReads.Select(r => r.State).ToList().Count;
+                        var onReads = mixerReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+
+                        var waterCo1 = mixerReads.Select(r => r.Water_Consumption).FirstOrDefault();
+                        var waterCo2 = mixerReads.Select(r => r.Water_Consumption).LastOrDefault();
+                        water = waterCo1 - waterCo2;
+                        machine.WC = waterCo1 - waterCo2;
+
+                        var coCo1 = mixerReads.Select(r => r.Co2_Consumption).FirstOrDefault();
+                        var coCo2 = mixerReads.Select(r => r.Co2_Consumption).LastOrDefault();
+                        co2 = coCo1 - coCo2;
+                        machine.CO2 = coCo1 - coCo2;
+
+                        var sCo1 = mixerReads.Select(r => r.Syrup_Consumption).FirstOrDefault();
+                        var sCo2 = mixerReads.Select(r => r.Syrup_Consumption).LastOrDefault();
+                        syrup = sCo1 - sCo2;
+                        machine.SC = sCo1 - sCo2;
+
+                        var hours1 = mixerReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = mixerReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+
+                    }
+                    else if (pallReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Palletizer"
+
+                        };
+                        var stateReadsCount = pallReads.Select(r => r.State).ToList().Count;
+                        var onReads = pallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+
+                        var packCo1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                        var packCo2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+                        machine.PackCount = packCo1 - packCo2;
+                        pack = packCo1 - packCo2;
+                        var palletCo1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                        var palletCo2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+                        machine.PalletCount = palletCo1 - palletCo2;
+                        pallet = palletCo1 - palletCo2;
+
+                        var hours1 = pallReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = pallReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    }
+                    else if (fillReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Filler"
+
+                        };
+                        var stateReadsCount = fillReads.Select(r => r.State).ToList().Count;
+                        var onReads = fillReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                        var CountCo2 = fillReads.Select(r => r.Count).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+                        bottle = CountCo1 - CountCo2;
+                        var Speed1 = fillReads.Select(r => r.Speed).Average();
+                        var Speed2 = fillReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = fillReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = fillReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+
+
+                        if (load.PlcCode == "AlFill3")
+                        {
+                            var fillerLine3 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == 3 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)(fillerLine3.Select(r => r.Counts).FirstOrDefault() - fillerLine3.Select(r => r.Counts).LastOrDefault())/(decimal)machine.BottleCount;
+                        }
+                        else if (load.PlcCode == "AlFill1")
+                        {
+                            var fillerLine5 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == 1 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)(fillerLine5.Select(r => r.Counts).FirstOrDefault() - fillerLine5.Select(r => r.Counts).LastOrDefault())/(decimal)machine.BottleCount ;
+                        }
+                        machines.Add(machine);
+                    }
+                    else if (dePallReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "DePalletizer"
+
+                        };
+                        var stateReadsCount = dePallReads.Select(r => r.State).ToList().Count;
+                        var onReads = dePallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = dePallReads.Select(r => r.Count).FirstOrDefault();
+                        var CountCo2 = dePallReads.Select(r => r.Count).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+
+                        var Speed1 = dePallReads.Select(r => r.Speed).Average();
+                        var Speed2 = dePallReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = dePallReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = dePallReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+
+                    }
+                    else if (labelReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Label"
+
+                        };
+                        var stateReadsCount = labelReads.Select(r => r.State).ToList().Count;
+                        var onReads = labelReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                        var CountCo2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+
+                        var Speed1 = labelReads.Select(r => r.Speed).Average();
+                        var Speed2 = labelReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = labelReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = labelReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        if(load.PlcCode == "AlLabl3")
+                        {
+                            var fillerLine3 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == 3 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)machine.BottleCount / (decimal)(fillerLine3.Select(r => r.Count).FirstOrDefault() - fillerLine3.Select(r => r.Count).LastOrDefault());
+                        }
+                        else if(load.PlcCode == "AlLabl1")
+                        {
+                            var fillerLine5 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == 1 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)machine.BottleCount / (decimal)(fillerLine5.Select(r => r.Count).FirstOrDefault() - fillerLine5.Select(r => r.Count).LastOrDefault());
+                        }
+
+                        machines.Add(machine);
+                    }
+                    else if (blowReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Blow"
+
+                        };
+                        var stateReadsCount = blowReads.Select(r => r.State).ToList().Count;
+                        var onReads = blowReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountIn1 = blowReads.Select(r => r.Count_In).FirstOrDefault();
+                        var CountIn2 = blowReads.Select(r => r.Count_In).LastOrDefault();
+                        machine.BottleCountIn = CountIn1 - CountIn2;
+
+                        var CountOut1 = blowReads.Select(r => r.Count_Out).FirstOrDefault();
+                        var CountOut2 = blowReads.Select(r => r.Count_Out).LastOrDefault();
+                        machine.BottleCountOut = CountOut1 - CountOut2;
+
+                        var Speed1 = blowReads.Select(r => r.Speed).Average();
+                        var Speed2 = blowReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = blowReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = blowReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    }
+
+                }
+                var ava = machines.ToList();
+                factory.Avalability = ava.Select(r => r.Avalability).Sum() / ava.Count;
+                factory.Performance = ava.Select(r => r.Performance).Sum() / ava.Count;
+                factory.ProductionTime = ava.Where(r => r.ProductionTime >0 && r.ProductionTime < 1).Select(r => r.ProductionTime).Sum() / ava.Where(r => r.ProductionTime > 0 && r.ProductionTime < 1).ToList().Count;
+                factory.EnergyConsumption = energyConsumption;
+
+                var mixersConsumption = ava.Where(r => r.PlcType == "Mixer").ToList();
+                var pallsConsumption = ava.Where(r => r.PlcType == "Palletizer").ToList();
+                var labelsConsumption = ava.Where(r => r.PlcType == "Label").ToList();
+                var dPallsConsumption = ava.Where(r => r.PlcType == "DePalletizer").ToList();
+                var fillersConsumption = ava.Where(r => r.PlcType == "Filler").ToList();
+                var blowsConsumption = ava.Where(r => r.PlcType == "Blow").ToList();
+
+                factory.WC = mixersConsumption.Select(r => r.WC).Sum();
+                factory.SC = mixersConsumption.Select(r => r.SC).Sum();
+                factory.CO2 = mixersConsumption.Select(r => r.CO2).Sum();
+
+                factory.PackCount = pallsConsumption.Select(r => r.PackCount).Sum();
+                factory.PalletCount = pallsConsumption.Select(r => r.PalletCount).Sum();
+
+                factory.BottleCount = labelsConsumption.Select(r => r.BottleCount).Sum();
+                factory.BottleCountIn = blowsConsumption.Select(r => r.BottleCountIn).Sum();
+                factory.BottleCountOut = blowsConsumption.Select(r => r.BottleCountOut).Sum();
+
+
+                return Ok(new { machines,from,to,factory});
+            }
+            else if(time == 2)
+            {
+                var from = ((DateTime.Today).AddHours(-4)).AddMinutes(10);
+                var to = ((DateTime.Today).AddHours(7)).AddMinutes(50);
+                List<MachineDetailsDTO> machines = new List<MachineDetailsDTO>();
+                var lines = _mContext.ProductionLines.ToList();
+                var energyConsumption = _eContext.IotTransactions.Where(r => r.SourceId == "L_Line02_0" && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => r.Energy1 + r.Energy2 + r.Energy3).ToList().DefaultIfEmpty(0).Sum();
+                MachineDetailsDTO factory = new MachineDetailsDTO
+                {
+                    MachineName = "Alex(API)",
+                    MachineCode = "Alex",
+                    PlcType = "1"
+                };
+                foreach (var load in loads)
+                {
+                    var mixerReads = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var pallReads = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var fillReads = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var labelReads = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    decimal co2 = 0;
+                    decimal water = 0;
+                    decimal syrup = 0;
+                    decimal pallet = 0;
+                    decimal pack = 0;
+                    decimal bottle = 0;
+                    if(mixerReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Mixer"
+
+                        };
+                        var stateReadsCount = mixerReads.Select(r => r.State).ToList().Count;
+                        var onReads = mixerReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+
+                        var waterCo1 = mixerReads.Select(r => r.Water_Consumption).FirstOrDefault();
+                        var waterCo2 = mixerReads.Select(r => r.Water_Consumption).LastOrDefault();
+                        water = waterCo1 - waterCo2;
+                        machine.WC = waterCo1 - waterCo2;
+
+                        var coCo1 = mixerReads.Select(r => r.Co2_Consumption).FirstOrDefault();
+                        var coCo2 = mixerReads.Select(r => r.Co2_Consumption).LastOrDefault();
+                        co2 = coCo1 - coCo2;
+                        machine.CO2 = coCo1 - coCo2;
+
+                        var sCo1 = mixerReads.Select(r => r.Syrup_Consumption).FirstOrDefault();
+                        var sCo2 = mixerReads.Select(r => r.Syrup_Consumption).LastOrDefault();
+                        syrup = sCo1 - sCo2;
+                        machine.SC = sCo1 - sCo2;
+
+                        var hours1 = mixerReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = mixerReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2)/(decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+
+                    }
+                    else if (pallReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Palletizer"
+
+                        };
+                        var stateReadsCount = pallReads.Select(r => r.State).ToList().Count;
+                        var onReads = pallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+
+                        var packCo1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                        var packCo2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+                        machine.PackCount = packCo1 - packCo2;
+                        pack = packCo1 - packCo2;
+                        var palletCo1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                        var palletCo2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+                        machine.PalletCount = palletCo1 - palletCo2;
+                        pallet = palletCo1 - palletCo2;
+
+                        var hours1 = pallReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = pallReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    }
+                    else if (fillReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Filler"
+
+                        };
+                        var stateReadsCount = fillReads.Select(r => r.State).ToList().Count;
+                        var onReads = fillReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                        var CountCo2 = fillReads.Select(r => r.Count).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+                        bottle = CountCo1 - CountCo2;
+                        var Speed1 = fillReads.Select(r => r.Speed).Average();
+                        var Speed2 = fillReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = fillReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = fillReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    }
+                    else if (dePallReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "DePalletizer"
+
+                        };
+                        var stateReadsCount = dePallReads.Select(r => r.State).ToList().Count;
+                        var onReads = dePallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = dePallReads.Select(r => r.Count).FirstOrDefault();
+                        var CountCo2 = dePallReads.Select(r => r.Count).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+
+                        var Speed1 = dePallReads.Select(r => r.Speed).Average();
+                        var Speed2 = dePallReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = dePallReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = dePallReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+
+                    }
+                    else if (labelReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Label"
+
+                        };
+                        var stateReadsCount = labelReads.Select(r => r.State).ToList().Count;
+                        var onReads = labelReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                        var CountCo2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+
+                        var Speed1 = labelReads.Select(r => r.Speed).Average();
+                        var Speed2 = labelReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = labelReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = labelReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    }
+                    else if (blowReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Blow"
+
+                        };
+                        var stateReadsCount = blowReads.Select(r => r.State).ToList().Count;
+                        var onReads = blowReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountIn1 = blowReads.Select(r => r.Count_In).FirstOrDefault();
+                        var CountIn2 = blowReads.Select(r => r.Count_In).LastOrDefault();
+                        machine.BottleCountIn = CountIn1 - CountIn2;
+
+                        var CountOut1 = blowReads.Select(r => r.Count_Out).FirstOrDefault();
+                        var CountOut2 = blowReads.Select(r => r.Count_Out).LastOrDefault();
+                        machine.BottleCountOut = CountOut1 - CountOut2;
+
+                        var Speed1 = blowReads.Select(r => r.Speed).Average();
+                        var Speed2 = blowReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = blowReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = blowReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    }
+
+                }
+                var ava = machines.ToList();
+                factory.Avalability = ava.Select(r => r.Avalability).Sum() / ava.Count;
+                factory.Performance = ava.Select(r => r.Performance).Sum() / ava.Count;
+                factory.ProductionTime = ava.Where(r => r.ProductionTime > 0 && r.ProductionTime < 1).Select(r => r.ProductionTime).Sum() / ava.Where(r => r.ProductionTime > 0 && r.ProductionTime < 1).ToList().Count;
+                factory.EnergyConsumption = energyConsumption;
+
+                var mixersConsumption = ava.Where(r => r.PlcType == "Mixer").ToList();
+                var pallsConsumption = ava.Where(r => r.PlcType == "Palletizer").ToList();
+                var labelsConsumption = ava.Where(r => r.PlcType == "Label").ToList();
+                var dPallsConsumption = ava.Where(r => r.PlcType == "DePalletizer").ToList();
+                var fillersConsumption = ava.Where(r => r.PlcType == "Filler").ToList();
+                var blowsConsumption = ava.Where(r => r.PlcType == "Blow").ToList();
+
+                factory.WC = mixersConsumption.Select(r => r.WC).Sum();
+                factory.SC = mixersConsumption.Select(r => r.SC).Sum();
+                factory.CO2 = mixersConsumption.Select(r => r.CO2).Sum();
+
+                factory.PackCount = pallsConsumption.Select(r => r.PackCount).Sum();
+                factory.PalletCount = pallsConsumption.Select(r => r.PalletCount).Sum();
+
+                factory.BottleCount = labelsConsumption.Select(r => r.BottleCount).Sum();
+                factory.BottleCountIn = blowsConsumption.Select(r => r.BottleCountIn).Sum();
+                factory.BottleCountOut = blowsConsumption.Select(r => r.BottleCountOut).Sum();
+                return Ok(new {machines,from,to,factory});
+            }
+            /*
+            else if(time == 3)
+            {
+                var from = DateTime.Today.AddDays(-7);
+                var to = DateTime.Today;
+                List<MachineDetailsDTO> machines = new List<MachineDetailsDTO>();
+                foreach (var load in loads)
+                {
+                    var machine
+                    MachineDetailsDTO machine = new MachineDetailsDTO
+                {
+                    MachineName = load.Name,
+                    MachineCode = load.PlcCode,
+
+                };
+
+                }
+            }*/
+            return Ok();
+        }
         // PUT: api/Plc/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.

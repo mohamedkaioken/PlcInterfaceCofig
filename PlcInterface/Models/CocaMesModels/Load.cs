@@ -19,5 +19,15 @@ namespace PlcInterface.Models.CocaMesModels
         public Factory Factory { get; set; }
         public ProductionLine ProductionLine { get; set; }
         public Utility Utility { get; set; }
+        public int? BoilerId { get; set; }
+        public int? CompressorId { get; set; }
+        public int? WaterPumpId { get; set; }
+        public int? WaterChemicalTreatmentId { get; set; }
+        public int? TankId { get; set; }
+        public Boiler Boiler { get; set; }
+        public Compressor Compressor { get; set; }
+        public WaterPump WaterPump { get; set; }
+        public WaterChemicalTreatment WaterChemicalTreatment { get; set; }
+        public Tank Tank { get; set; }
     }
 }

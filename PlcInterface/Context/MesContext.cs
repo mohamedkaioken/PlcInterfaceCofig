@@ -14,6 +14,11 @@ namespace PlcInterface.Context
         public DbSet<Utility> Utilities { get; set; }
         public DbSet<ProductionLine> ProductionLines { get; set; }
         public DbSet<MachineParameter> MachineParameters { get; set; }
+        public DbSet<Compressor> Compressors { get; set; }
+        public DbSet<Boiler> Boilers { get; set; }
+        public DbSet<WaterChemicalTreatment> WaterChemicalTreatments { get; set; }
+        public DbSet<WaterPump> WaterPumps { get; set; }
+        public DbSet<Tank> Tanks { get; set; }
         public MesContext(DbContextOptions<MesContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)

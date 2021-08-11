@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PlcInterface.Context;
 
 namespace PlcInterface.Migrations.Mes
 {
     [DbContext(typeof(MesContext))]
-    partial class MesContextModelSnapshot : ModelSnapshot
+    [Migration("20210809150834_AddUtilitiesTypesNull")]
+    partial class AddUtilitiesTypesNull
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,9 +119,6 @@ namespace PlcInterface.Migrations.Mes
                     b.Property<string>("SignalCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TankId")
-                        .HasColumnType("int");
-
                     b.Property<int?>("UtilityId")
                         .HasColumnType("int");
 
@@ -138,8 +137,6 @@ namespace PlcInterface.Migrations.Mes
                     b.HasIndex("FactoryId");
 
                     b.HasIndex("ProductionLineId");
-
-                    b.HasIndex("TankId");
 
                     b.HasIndex("UtilityId");
 
@@ -189,29 +186,6 @@ namespace PlcInterface.Migrations.Mes
                     b.HasIndex("FactoryId");
 
                     b.ToTable("ProductionLines");
-                });
-
-            modelBuilder.Entity("PlcInterface.Models.CocaMesModels.Tank", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
-
-                    b.Property<int?>("FactoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FactoryId");
-
-                    b.ToTable("Tanks");
                 });
 
             modelBuilder.Entity("PlcInterface.Models.CocaMesModels.Utility", b =>
@@ -319,10 +293,6 @@ namespace PlcInterface.Migrations.Mes
                         .WithMany("Loads")
                         .HasForeignKey("ProductionLineId");
 
-                    b.HasOne("PlcInterface.Models.CocaMesModels.Tank", "Tank")
-                        .WithMany("Loads")
-                        .HasForeignKey("TankId");
-
                     b.HasOne("PlcInterface.Models.CocaMesModels.Utility", "Utility")
                         .WithMany("Loads")
                         .HasForeignKey("UtilityId");
@@ -343,8 +313,6 @@ namespace PlcInterface.Migrations.Mes
 
                     b.Navigation("ProductionLine");
 
-                    b.Navigation("Tank");
-
                     b.Navigation("Utility");
 
                     b.Navigation("WaterChemicalTreatment");
@@ -356,15 +324,6 @@ namespace PlcInterface.Migrations.Mes
                 {
                     b.HasOne("PlcInterface.Models.CocaMesModels.Factory", "Factory")
                         .WithMany("ProductionLines")
-                        .HasForeignKey("FactoryId");
-
-                    b.Navigation("Factory");
-                });
-
-            modelBuilder.Entity("PlcInterface.Models.CocaMesModels.Tank", b =>
-                {
-                    b.HasOne("PlcInterface.Models.CocaMesModels.Factory", "Factory")
-                        .WithMany()
                         .HasForeignKey("FactoryId");
 
                     b.Navigation("Factory");
@@ -417,11 +376,6 @@ namespace PlcInterface.Migrations.Mes
                 });
 
             modelBuilder.Entity("PlcInterface.Models.CocaMesModels.ProductionLine", b =>
-                {
-                    b.Navigation("Loads");
-                });
-
-            modelBuilder.Entity("PlcInterface.Models.CocaMesModels.Tank", b =>
                 {
                     b.Navigation("Loads");
                 });
