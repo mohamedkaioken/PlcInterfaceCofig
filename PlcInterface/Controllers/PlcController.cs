@@ -164,7 +164,6 @@ namespace PlcInterface.Controllers
                 }
                 else if (type == "Fill")
                 {
-
                     int state = (int)decimal.Parse(queries["State"].Value);
                     int line = (int)decimal.Parse(queries["Line"].Value);
                     int fault = (int)decimal.Parse(queries["Fault"].Value);
@@ -198,6 +197,7 @@ namespace PlcInterface.Controllers
                     _context.Fillers.Add(reads);
                     await _context.SaveChangesAsync();
                     return Ok("ok");
+                    
                 }
                 else if (type == "Pall")
                 {
@@ -344,7 +344,7 @@ namespace PlcInterface.Controllers
                     img = "function.svg",
                 };
 
-                var loads = _mContext.Loads.Where(r => r.ProductionLineId == function.Id).Select(r => new { r.Id, r.EnergyCode,r.PlcCode,r.SignalCode, r.Name }).ToList();
+                var loads = _mContext.Loads.Where(r => r.ProductionLineId == function.Id && r.PlcCode != null).Select(r => new { r.Id, r.EnergyCode,r.PlcCode,r.SignalCode, r.Name }).ToList();
                 foreach (var load in loads)
                 {
                     TreeDTO treeDTO3 = new TreeDTO
@@ -5395,7 +5395,7 @@ namespace PlcInterface.Controllers
             return Ok();
         }
 
-
+        
         [HttpGet("ValueOfTree/{Load}/{Option}/{From}/{To}/{Resolution}")]
         public ActionResult ValueOfTreeDate(string Load, int Option, string From, string To, int Resolution)
         {
@@ -6702,14 +6702,31 @@ namespace PlcInterface.Controllers
             return Ok(mixerReads2);
         }
 
-        [HttpGet("GetMachineDetails/{time}")]
-        public ActionResult GetMachineDetails(int time)
+        [HttpGet("GetMachinesDetails/{time}")]
+        public ActionResult GetMachinesDetails(int time)
         {
             var loads = _mContext.Loads.Where(r=>r.PlcCode != null).ToList();
-            if(time == 1)
+            var From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+            var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
             {
-                var from = ((DateTime.Today).AddHours(8)).AddMinutes(10);
-                var to = ((DateTime.Today).AddHours(19)).AddMinutes(50);
+                From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+                To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(20) && DateTime.Now < (DateTime.Today.AddDays(1)).AddHours(8))
+            {
+                From = (DateTime.Today.AddHours(20)).AddMinutes(10);
+                To = ((DateTime.Today.AddDays(1)).AddHours(7)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(-4) && DateTime.Now < (DateTime.Today.AddHours(8)))
+            {
+                From = (DateTime.Today.AddHours(-4)).AddMinutes(10);
+                To = (DateTime.Today.AddHours(7)).AddMinutes(50);
+            }
+            if (time == 1)
+            {
+                var from = From;
+                var to = To;
                 List<MachineDetailsDTO> machines = new List<MachineDetailsDTO>();
                 var energyConsumption = _eContext.IotTransactions.Where(r => r.SourceId == "L_Line02_0" && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => r.Energy1 + r.Energy2 + r.Energy3).ToList().DefaultIfEmpty(0).Sum();
                 MachineDetailsDTO factory = new MachineDetailsDTO
@@ -6720,50 +6737,58 @@ namespace PlcInterface.Controllers
                 };
                 foreach (var load in loads)
                 {
-                    var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0 && r.Co2_Consumption<100&& r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
-                    
-                    var mixerReads = _context.Mixers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0&& r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp<=to).ToList();
+                    var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0 && r.Co2_Consumption < 100 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
+
+                    var mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (mixerReads2.Any())
                     {
-                       mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                        mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
 
-                    var pallReads2 = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No == 0 && r.Pallet_No<=100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
-                    var pallReads = _context.Palletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No == 0 && r.Pallet_No <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No >= 0 && r.Packet_No > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (pallReads2.Any())
                     {
                         pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
-                    var fillReads2 = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count ==0 && r.Count<=100 &&r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
-                    var fillReads = _context.Fillers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >=0 &&r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
-                    if(fillReads2.Any())
+                    var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (fillReads2.Any())
                     {
                         fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
 
                     }
 
-                    var dePallReads2 = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
-                    var dePallReads = _context.DPalletizers.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
-                    if(dePallReads2.Any())
+                    var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (dePallReads2.Any())
                     {
                         dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
-                    var labelReads2 = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
-                    var labelReads = _context.Labels.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList(); 
-                    if(labelReads2.Any())
+                    var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (labelReads2.Any())
                     {
                         labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
-                    var blowReads2 = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var blowReads = _context.Blow_Moulders.OrderByDescending(r=>r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    if(blowReads2.Any())
+                    var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (cartReads2.Any())
+                    {
+                        cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (blowReads2.Any())
                     {
                         blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
+
 
                     decimal co2 = 0;
                     decimal water = 0;
@@ -6802,8 +6827,8 @@ namespace PlcInterface.Controllers
 
                         var hours1 = mixerReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = mixerReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
-
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
 
@@ -6839,9 +6864,48 @@ namespace PlcInterface.Controllers
 
                         var hours1 = pallReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = pallReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
-
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
                         machine.EnergyConsumption = energyConsumption;
+
+                        var maxSpeed = 0;
+                        var minuteCount = (pallReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                            OEEDTO perValue = new OEEDTO { };
+                            OEEDTO avaValue = new OEEDTO { };
+                            var currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                            var currentTimeTo = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i + 60);
+                            if (currentTimeTo >= DateTime.Now)
+                            {
+                                currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
+                                currentTimeTo = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                            }
+                            var sC1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Pallet_No;
+                            var sC2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Pallet_No;
+
+                            var avaCount = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                            var avaCount2 = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+                            var sC = sC1 - sC2;
+                            if (sC > maxSpeed)
+                            {
+                                maxSpeed = sC;
+                            }
+                            machine.Speed = sC;
+                            if (maxSpeed == 0)
+                            {
+                                maxSpeed = 1;
+                            }
+                            machine.Performance = (decimal)sC / (decimal)maxSpeed;
+
+                            perValue.Value = machine.Performance;
+                            perValue.TimeStamp = currentTimeFrom;
+                            machine.perValues.Add(perValue);
+
+                            avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                            avaValue.TimeStamp = currentTimeFrom;
+                            machine.avaValues.Add(avaValue);
+                        }
                         machines.Add(machine);
                     }
                     else if (fillReads.Any())
@@ -6869,25 +6933,42 @@ namespace PlcInterface.Controllers
                         var Speed1 = fillReads.Select(r => r.Speed).Average();
                         var Speed2 = fillReads.Select(r => r.Speed).Max();
                         machine.Performance = (decimal)Speed1 / (decimal)Speed2;
-
+                        machine.Speed = fillReads.Select(r => r.Speed).FirstOrDefault();
 
                         var hours1 = fillReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = fillReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
 
                         machine.EnergyConsumption = energyConsumption;
+                        var minuteCount = (fillReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                            OEEDTO perValue = new OEEDTO { };
+                            OEEDTO avaValue = new OEEDTO { };
+                            var currentTimeFrom = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                            var currentTimeTo = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i + 60);
+                            if (currentTimeTo >= DateTime.Now && currentTimeFrom < DateTime.Now.AddHours(1))
+                            {
+                                currentTimeFrom = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
+                                currentTimeTo = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                            }
+                            var sC1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
 
 
-                        if (load.PlcCode == "AlFill3")
-                        {
-                            var fillerLine3 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == 3 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                            machine.Quality = (decimal)(fillerLine3.Select(r => r.Counts).FirstOrDefault() - fillerLine3.Select(r => r.Counts).LastOrDefault())/(decimal)machine.BottleCount;
+                            var avaCount = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                            var avaCount2 = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                            perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                            perValue.TimeStamp = currentTimeFrom;
+                            machine.perValues.Add(perValue);
+
+                            avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                            avaValue.TimeStamp = currentTimeFrom;
+                            machine.avaValues.Add(avaValue);
                         }
-                        else if (load.PlcCode == "AlFill1")
-                        {
-                            var fillerLine5 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == 1 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                            machine.Quality = (decimal)(fillerLine5.Select(r => r.Counts).FirstOrDefault() - fillerLine5.Select(r => r.Counts).LastOrDefault())/(decimal)machine.BottleCount ;
-                        }
+
                         machines.Add(machine);
                     }
                     else if (dePallReads.Any())
@@ -6915,14 +6996,41 @@ namespace PlcInterface.Controllers
                         var Speed1 = dePallReads.Select(r => r.Speed).Average();
                         var Speed2 = dePallReads.Select(r => r.Speed).Max();
                         machine.Performance = (decimal)Speed1 / (decimal)Speed2;
-
+                        machine.Speed = dePallReads.Select(r => r.Speed).FirstOrDefault();
 
                         var hours1 = dePallReads.Select(r => r.Hours).FirstOrDefault();
                         var hours2 = dePallReads.Select(r => r.Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
-
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
+                        var minuteCount = (DateTime.Now - from).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                            OEEDTO perValue = new OEEDTO { };
+                            OEEDTO avaValue = new OEEDTO { };
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + 60);
+                            if (currentTimeTo >= DateTime.Now)
+                            {
+                                currentTimeFrom = from.AddMinutes(i - 60);
+                                currentTimeTo = from.AddMinutes(i);
+                            }
+                            var sC1 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                            var avaCount = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                            var avaCount2 = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                            perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                            perValue.TimeStamp = currentTimeFrom;
+                            machine.perValues.Add(perValue);
+
+                            avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                            avaValue.TimeStamp = currentTimeFrom;
+                            machine.avaValues.Add(avaValue);
+                        }
 
                     }
                     else if (labelReads.Any())
@@ -6950,22 +7058,120 @@ namespace PlcInterface.Controllers
                         var Speed1 = labelReads.Select(r => r.Speed).Average();
                         var Speed2 = labelReads.Select(r => r.Speed).Max();
                         machine.Performance = (decimal)Speed1 / (decimal)Speed2;
-
+                        machine.Speed = labelReads.Select(r => r.Speed).FirstOrDefault();
 
                         var hours1 = labelReads.Select(r => r.Hours).FirstOrDefault();
                         var hours2 = labelReads.Select(r => r.Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
-
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
                         machine.EnergyConsumption = energyConsumption;
-                        if(load.PlcCode == "AlLabl3")
+                        /*if (load.PlcCode == "AlLabl3")
                         {
                             var fillerLine3 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == 3 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                             machine.Quality = (decimal)machine.BottleCount / (decimal)(fillerLine3.Select(r => r.Count).FirstOrDefault() - fillerLine3.Select(r => r.Count).LastOrDefault());
                         }
-                        else if(load.PlcCode == "AlLabl1")
+                        else if (load.PlcCode == "AlLabl1")
                         {
                             var fillerLine5 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == 1 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                             machine.Quality = (decimal)machine.BottleCount / (decimal)(fillerLine5.Select(r => r.Count).FirstOrDefault() - fillerLine5.Select(r => r.Count).LastOrDefault());
+                        }*/
+                        machine.Quality = 1;
+                        var minuteCount = (labelReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                            OEEDTO perValue = new OEEDTO { };
+                            OEEDTO avaValue = new OEEDTO { };
+                            var currentTimeFrom = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                            var currentTimeTo = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i + 60);
+                            if (currentTimeTo >= DateTime.Now)
+                            {
+                                currentTimeFrom = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
+                                currentTimeTo = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                            }
+                            var sC1 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                            var avaCount = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                            var avaCount2 = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+                            
+                            if(sC1.Max() == 0)
+                            {
+                                perValue.Value = (decimal)sC1.Average() / 1;
+                            }
+                            else
+                            {
+                                perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+                            }
+                            
+
+                            perValue.TimeStamp = currentTimeFrom;
+                            machine.perValues.Add(perValue);
+
+                            avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                            avaValue.TimeStamp = currentTimeFrom;
+                            machine.avaValues.Add(avaValue);
+                        }
+
+                        machines.Add(machine);
+                    }
+                    else if (cartReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Cartonizer"
+
+                        };
+                        var stateReadsCount = cartReads.Select(r => r.State).ToList().Count;
+                        var onReads = cartReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = cartReads.Select(r => r.Counts).FirstOrDefault();
+                        var CountCo2 = cartReads.Select(r => r.Counts).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+                        machine.Speed = cartReads.Select(r => r.Speed).FirstOrDefault();
+                        var Speed1 = cartReads.Select(r => r.Speed).Average();
+                        var Speed2 = cartReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = cartReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = cartReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
+                        machine.EnergyConsumption = energyConsumption;
+                        var minuteCount = (DateTime.Now - from).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                            OEEDTO perValue = new OEEDTO { };
+                            OEEDTO avaValue = new OEEDTO { };
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + 60);
+                            if (currentTimeTo >= DateTime.Now)
+                            {
+                                currentTimeFrom = from.AddMinutes(i - 60);
+                                currentTimeTo = from.AddMinutes(i);
+                            }
+                            var sC1 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                            var avaCount = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                            var avaCount2 = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                            perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                            perValue.TimeStamp = currentTimeFrom;
+                            machine.perValues.Add(perValue);
+
+                            avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                            avaValue.TimeStamp = currentTimeFrom;
+                            machine.avaValues.Add(avaValue);
                         }
 
                         machines.Add(machine);
@@ -6990,6 +7196,7 @@ namespace PlcInterface.Controllers
                         machine.PalletCount = pallet;
                         var CountIn1 = blowReads.Select(r => r.Count_In).FirstOrDefault();
                         var CountIn2 = blowReads.Select(r => r.Count_In).LastOrDefault();
+                        machine.Speed = blowReads.Select(r => r.Speed).FirstOrDefault();
                         machine.BottleCountIn = CountIn1 - CountIn2;
 
                         var CountOut1 = blowReads.Select(r => r.Count_Out).FirstOrDefault();
@@ -7003,13 +7210,41 @@ namespace PlcInterface.Controllers
 
                         var hours1 = blowReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = blowReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
-
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
+                        var minuteCount = (DateTime.Now - from).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                            OEEDTO perValue = new OEEDTO { };
+                            OEEDTO avaValue = new OEEDTO { };
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + 60);
+                            if (currentTimeTo >= DateTime.Now)
+                            {
+                                currentTimeFrom = from.AddMinutes(i - 60);
+                                currentTimeTo = from.AddMinutes(i);
+                            }
+                            var sC1 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                            var avaCount = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                            var avaCount2 = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                            perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                            perValue.TimeStamp = currentTimeFrom;
+                            machine.perValues.Add(perValue);
+
+                            avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                            avaValue.TimeStamp = currentTimeFrom;
+                            machine.avaValues.Add(avaValue);
+                        }
                     }
 
                 }
+
                 var ava = machines.ToList();
                 factory.Avalability = ava.Select(r => r.Avalability).Sum() / ava.Count;
                 factory.Performance = ava.Select(r => r.Performance).Sum() / ava.Count;
@@ -7095,7 +7330,7 @@ namespace PlcInterface.Controllers
 
                         var hours1 = mixerReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = mixerReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2)/(decimal)24;
+                        machine.ProductionTime = (decimal)(hours1 - hours2)/(decimal)12;
 
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
@@ -7132,7 +7367,7 @@ namespace PlcInterface.Controllers
 
                         var hours1 = pallReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = pallReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
 
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
@@ -7166,7 +7401,7 @@ namespace PlcInterface.Controllers
 
                         var hours1 = fillReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = fillReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
 
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
@@ -7200,7 +7435,7 @@ namespace PlcInterface.Controllers
 
                         var hours1 = dePallReads.Select(r => r.Hours).FirstOrDefault();
                         var hours2 = dePallReads.Select(r => r.Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
 
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
@@ -7235,7 +7470,7 @@ namespace PlcInterface.Controllers
 
                         var hours1 = labelReads.Select(r => r.Hours).FirstOrDefault();
                         var hours2 = labelReads.Select(r => r.Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
 
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
@@ -7273,7 +7508,7 @@ namespace PlcInterface.Controllers
 
                         var hours1 = blowReads.Select(r => r.Production_Hours).FirstOrDefault();
                         var hours2 = blowReads.Select(r => r.Production_Hours).LastOrDefault();
-                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)24;
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
 
                         machine.EnergyConsumption = energyConsumption;
                         machines.Add(machine);
@@ -7325,6 +7560,1528 @@ namespace PlcInterface.Controllers
             }*/
             return Ok();
         }
+
+        [HttpGet("GetMachineDetails/{id}")]
+        public ActionResult GetMachineDetails(string id)
+        {
+            var loads = _mContext.Loads.Where(r => r.PlcCode == id).ToList();
+
+            var From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+            var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
+            {
+                From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+                To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(20) && DateTime.Now < (DateTime.Today.AddDays(1)).AddHours(8))
+            {
+                From = (DateTime.Today.AddHours(20)).AddMinutes(10);
+                To = ((DateTime.Today.AddDays(1)).AddHours(7)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(-4) && DateTime.Now < (DateTime.Today.AddHours(8)))
+            {
+                From = (DateTime.Today.AddHours(-4)).AddMinutes(10);
+                To = (DateTime.Today.AddHours(7)).AddMinutes(50);
+            }
+
+                    var from = From;
+                        var to = To;
+                        List<MachineDetailsDTO> machines = new List<MachineDetailsDTO>();
+                        var energyConsumption = _eContext.IotTransactions.Where(r => r.SourceId == "L_Line02_0" && r.TimeStamp >= from && r.TimeStamp <= to).Select(r => r.Energy1 + r.Energy2 + r.Energy3).ToList().DefaultIfEmpty(0).Sum();
+               
+                        foreach (var load in loads)
+                        {
+                        var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Co2_Consumption >= 0 && r.Co2_Consumption < 100 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
+
+                        var mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        if (mixerReads2.Any())
+                        {
+                            mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                        }
+
+
+                        var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Pallet_No == 0 && r.Pallet_No <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Pallet_No >= 0 && r.Packet_No > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        if (pallReads2.Any())
+                        {
+                            pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                        }
+
+                        var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        if (fillReads2.Any())
+                        {
+                            fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+
+                        }
+
+                        var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        if (dePallReads2.Any())
+                        {
+                            dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                        }
+
+                        var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        if (labelReads2.Any())
+                        {
+                            labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                        }
+
+                        var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        if (cartReads2.Any())
+                        {
+                           cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                        }
+
+                        var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        if (blowReads2.Any())
+                        {
+                            blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                        }
+
+
+                    decimal co2 = 0;
+                    decimal water = 0;
+                    decimal syrup = 0;
+                    decimal pallet = 0;
+                    decimal pack = 0;
+                    decimal bottle = 0;
+                    if (mixerReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Mixer"
+
+                        };
+                        var stateReadsCount = mixerReads.Select(r => r.State).ToList().Count;
+                        var onReads = mixerReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+
+                        var waterCo1 = mixerReads.Select(r => r.Water_Consumption).FirstOrDefault();
+                        var waterCo2 = mixerReads.Select(r => r.Water_Consumption).LastOrDefault();
+                        water = waterCo1 - waterCo2;
+                        machine.WC = waterCo1 - waterCo2;
+
+                        var coCo1 = mixerReads.Select(r => r.Co2_Consumption).FirstOrDefault();
+                        var coCo2 = mixerReads.Select(r => r.Co2_Consumption).LastOrDefault();
+                        co2 = coCo1 - coCo2;
+                        machine.CO2 = coCo1 - coCo2;
+
+                        var sCo1 = mixerReads.Select(r => r.Syrup_Consumption).FirstOrDefault();
+                        var sCo2 = mixerReads.Select(r => r.Syrup_Consumption).LastOrDefault();
+                        syrup = sCo1 - sCo2;
+                        machine.SC = sCo1 - sCo2;
+
+                        var hours1 = mixerReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = mixerReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+
+                    }
+                    else if (pallReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Palletizer"
+
+                        };
+                        var stateReadsCount = pallReads.Select(r => r.State).ToList().Count;
+                        var onReads = pallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+
+                        var packCo1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                        var packCo2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+                        machine.PackCount = packCo1 - packCo2;
+                        pack = packCo1 - packCo2;
+                        var palletCo1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                        var palletCo2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+                        machine.PalletCount = palletCo1 - palletCo2;
+                        pallet = palletCo1 - palletCo2;
+
+                        var hours1 = pallReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = pallReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
+                         machine.EnergyConsumption = energyConsumption;
+
+                    var maxSpeed = 0;
+                    var minuteCount = (pallReads.OrderByDescending(r=>r.Id).FirstOrDefault().TimeStamp - pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
+                    for (int i = 0; i < minuteCount; i += 60)
+                    {
+                        OEEDTO perValue = new OEEDTO { };
+                        OEEDTO avaValue = new OEEDTO { };
+                        var currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                        var currentTimeTo = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i + 60);
+                        if (currentTimeTo >= DateTime.Now)
+                        {
+                            currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
+                            currentTimeTo = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                        }
+                        var sC1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Pallet_No;
+                        var sC2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Pallet_No;
+
+                        var avaCount = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                        var avaCount2 = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+                        var sC = sC1 - sC2;
+                        if (sC > maxSpeed)
+                        {
+                            maxSpeed = sC;
+                        }
+                        machine.Speed = sC;
+                        if (maxSpeed == 0)
+                        {
+                            maxSpeed = 1;
+                        }
+                        machine.Performance = (decimal)sC / (decimal)maxSpeed;
+
+                        perValue.Value = machine.Performance;
+                        perValue.TimeStamp = currentTimeFrom;
+                        machine.perValues.Add(perValue);
+
+                        avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                        avaValue.TimeStamp = currentTimeFrom;
+                        machine.avaValues.Add(avaValue);
+                    }
+                    machines.Add(machine);
+                    }
+                    else if (fillReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Filler"
+
+                        };
+                        var stateReadsCount = fillReads.Select(r => r.State).ToList().Count;
+                        var onReads = fillReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                        var CountCo2 = fillReads.Select(r => r.Count).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+                        bottle = CountCo1 - CountCo2;
+                        var Speed1 = fillReads.Select(r => r.Speed).Average();
+                        var Speed2 = fillReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+                        machine.Speed = fillReads.Select(r => r.Speed).FirstOrDefault();
+
+                        var hours1 = fillReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = fillReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
+
+                        machine.EnergyConsumption = energyConsumption;
+                        var minuteCount = (DateTime.Now - from).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                        OEEDTO perValue = new OEEDTO { };
+                        OEEDTO avaValue = new OEEDTO { };
+                        var currentTimeFrom = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                        var currentTimeTo = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i + 60);
+                        if (currentTimeTo >= DateTime.Now && currentTimeFrom < DateTime.Now.AddHours(1))
+                        {
+                            currentTimeFrom = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
+                            currentTimeTo = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                        }
+                        var sC1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                        var avaCount = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                        var avaCount2 = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                        perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                        perValue.TimeStamp = currentTimeFrom;
+                        machine.perValues.Add(perValue);
+
+                        avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                        avaValue.TimeStamp = currentTimeFrom;
+                        machine.avaValues.Add(avaValue);
+                    }
+
+                    if (load.PlcCode == "AlFill3")
+                        {
+                            var fillerLine3 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == 3 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)(fillerLine3.Select(r => r.Counts).FirstOrDefault() - fillerLine3.Select(r => r.Counts).LastOrDefault()) / (decimal)machine.BottleCount;
+                        }
+                        else if (load.PlcCode == "AlFill1")
+                        {
+                            var fillerLine5 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == 1 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)(fillerLine5.Select(r => r.Counts).FirstOrDefault() - fillerLine5.Select(r => r.Counts).LastOrDefault()) / (decimal)machine.BottleCount;
+                        }
+                        machines.Add(machine);
+                    }
+                    else if (dePallReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "DePalletizer"
+
+                        };
+                        var stateReadsCount = dePallReads.Select(r => r.State).ToList().Count;
+                        var onReads = dePallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = dePallReads.Select(r => r.Count).FirstOrDefault();
+                        var CountCo2 = dePallReads.Select(r => r.Count).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+
+                        var Speed1 = dePallReads.Select(r => r.Speed).Average();
+                        var Speed2 = dePallReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+                    machine.Speed = dePallReads.Select(r => r.Speed).FirstOrDefault();
+
+                    var hours1 = dePallReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = dePallReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                    machine.ProductionHours = (decimal)(hours1 - hours2);
+                    machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    var minuteCount = (DateTime.Now - from).TotalMinutes;
+                    for (int i = 0; i < minuteCount; i += 60)
+                    {
+                        OEEDTO perValue = new OEEDTO { };
+                        OEEDTO avaValue = new OEEDTO { };
+                        var currentTimeFrom = from.AddMinutes(i);
+                        var currentTimeTo = from.AddMinutes(i + 60);
+                        if (currentTimeTo >= DateTime.Now)
+                        {
+                            currentTimeFrom = from.AddMinutes(i - 60);
+                            currentTimeTo = from.AddMinutes(i);
+                        }
+                        var sC1 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                        var avaCount = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                        var avaCount2 = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                        perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                        perValue.TimeStamp = currentTimeFrom;
+                        machine.perValues.Add(perValue);
+
+                        avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                        avaValue.TimeStamp = currentTimeFrom;
+                        machine.avaValues.Add(avaValue);
+                    }
+
+                }
+                    else if (labelReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Label"
+
+                        };
+                        var stateReadsCount = labelReads.Select(r => r.State).ToList().Count;
+                        var onReads = labelReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                        var CountCo2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+
+                        var Speed1 = labelReads.Select(r => r.Speed).Average();
+                        var Speed2 = labelReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+                    machine.Speed = labelReads.Select(r => r.Speed).FirstOrDefault();
+
+                    var hours1 = labelReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = labelReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
+                        machine.EnergyConsumption = energyConsumption;
+                        if (load.PlcCode == "AlLabl3")
+                        {
+                            var fillerLine3 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == 3 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)machine.BottleCount / (decimal)(fillerLine3.Select(r => r.Count).FirstOrDefault() - fillerLine3.Select(r => r.Count).LastOrDefault());
+                        }
+                        else if (load.PlcCode == "AlLabl1")
+                        {
+                            var fillerLine5 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == 1 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                            machine.Quality = (decimal)machine.BottleCount / (decimal)(fillerLine5.Select(r => r.Count).FirstOrDefault() - fillerLine5.Select(r => r.Count).LastOrDefault());
+                        }
+                    var minuteCount = (DateTime.Now - from).TotalMinutes;
+                    for (int i = 0; i < minuteCount; i += 60)
+                    {
+                        OEEDTO perValue = new OEEDTO { };
+                        OEEDTO avaValue = new OEEDTO { };
+                        var currentTimeFrom = from.AddMinutes(i);
+                        var currentTimeTo = from.AddMinutes(i + 60);
+                        if (currentTimeTo >= DateTime.Now)
+                        {
+                            currentTimeFrom = from.AddMinutes(i - 60);
+                            currentTimeTo = from.AddMinutes(i);
+                        }
+                        var sC1 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                        var avaCount = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                        var avaCount2 = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                        perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                        perValue.TimeStamp = currentTimeFrom;
+                        machine.perValues.Add(perValue);
+
+                        avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                        avaValue.TimeStamp = currentTimeFrom;
+                        machine.avaValues.Add(avaValue);
+                    }
+
+                    machines.Add(machine);
+                    }
+                    else if (cartReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Cartonizer"
+
+                        };
+                        var stateReadsCount = cartReads.Select(r => r.State).ToList().Count;
+                        var onReads = cartReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountCo1 = cartReads.Select(r => r.Counts).FirstOrDefault();
+                        var CountCo2 = cartReads.Select(r => r.Counts).LastOrDefault();
+                        machine.BottleCount = CountCo1 - CountCo2;
+                    machine.Speed = cartReads.Select(r => r.Speed).FirstOrDefault();
+                    var Speed1 = cartReads.Select(r => r.Speed).Average();
+                        var Speed2 = cartReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = cartReads.Select(r => r.Hours).FirstOrDefault();
+                        var hours2 = cartReads.Select(r => r.Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
+                        machine.EnergyConsumption = energyConsumption;
+                    var minuteCount = (DateTime.Now - from).TotalMinutes;
+                    for (int i = 0; i < minuteCount; i += 60)
+                    {
+                        OEEDTO perValue = new OEEDTO { };
+                        OEEDTO avaValue = new OEEDTO { };
+                        var currentTimeFrom = from.AddMinutes(i);
+                        var currentTimeTo = from.AddMinutes(i + 60);
+                        if (currentTimeTo >= DateTime.Now)
+                        {
+                            currentTimeFrom = from.AddMinutes(i - 60);
+                            currentTimeTo = from.AddMinutes(i);
+                        }
+                        var sC1 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                        var avaCount = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                        var avaCount2 = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                        perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                        perValue.TimeStamp = currentTimeFrom;
+                        machine.perValues.Add(perValue);
+
+                        avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                        avaValue.TimeStamp = currentTimeFrom;
+                        machine.avaValues.Add(avaValue);
+                    }
+
+                    machines.Add(machine);
+                    }
+                else if (blowReads.Any())
+                    {
+                        MachineDetailsDTO machine = new MachineDetailsDTO
+                        {
+                            MachineName = load.Name,
+                            MachineCode = load.PlcCode,
+                            LineId = (int)load.ProductionLineId,
+                            PlcType = "Blow"
+
+                        };
+                        var stateReadsCount = blowReads.Select(r => r.State).ToList().Count;
+                        var onReads = blowReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        machine.Avalability = (decimal)onReads / (decimal)stateReadsCount;
+                        machine.WC = water;
+                        machine.CO2 = co2;
+                        machine.SC = syrup;
+                        machine.PackCount = pack;
+                        machine.PalletCount = pallet;
+                        var CountIn1 = blowReads.Select(r => r.Count_In).FirstOrDefault();
+                        var CountIn2 = blowReads.Select(r => r.Count_In).LastOrDefault();
+                    machine.Speed = blowReads.Select(r => r.Speed).FirstOrDefault();
+                    machine.BottleCountIn = CountIn1 - CountIn2;
+
+                        var CountOut1 = blowReads.Select(r => r.Count_Out).FirstOrDefault();
+                        var CountOut2 = blowReads.Select(r => r.Count_Out).LastOrDefault();
+                        machine.BottleCountOut = CountOut1 - CountOut2;
+
+                        var Speed1 = blowReads.Select(r => r.Speed).Average();
+                        var Speed2 = blowReads.Select(r => r.Speed).Max();
+                        machine.Performance = (decimal)Speed1 / (decimal)Speed2;
+
+
+                        var hours1 = blowReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var hours2 = blowReads.Select(r => r.Production_Hours).LastOrDefault();
+                        machine.ProductionTime = (decimal)(hours1 - hours2) / (decimal)12;
+                        machine.ProductionHours = (decimal)(hours1 - hours2);
+                        machine.EnergyConsumption = energyConsumption;
+                        machines.Add(machine);
+                    var minuteCount = (DateTime.Now - from).TotalMinutes;
+                    for (int i = 0; i < minuteCount; i += 60)
+                    {
+                        OEEDTO perValue = new OEEDTO { };
+                        OEEDTO avaValue = new OEEDTO { };
+                        var currentTimeFrom = from.AddMinutes(i);
+                        var currentTimeTo = from.AddMinutes(i + 60);
+                        if (currentTimeTo >= DateTime.Now)
+                        {
+                            currentTimeFrom = from.AddMinutes(i - 60);
+                            currentTimeTo = from.AddMinutes(i);
+                        }
+                        var sC1 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).Select(r => r.Speed).ToList();
+
+
+                        var avaCount = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                        var avaCount2 = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+
+                        perValue.Value = (decimal)sC1.Average() / (decimal)sC1.Max();
+
+                        perValue.TimeStamp = currentTimeFrom;
+                        machine.perValues.Add(perValue);
+
+                        avaValue.Value = (decimal)avaCount / (decimal)avaCount2;
+                        avaValue.TimeStamp = currentTimeFrom;
+                        machine.avaValues.Add(avaValue);
+                    }
+                }
+
+                }
+               
+
+                return Ok(new { machines, from, to });
+           
+        }
+
+        [HttpGet("LinesDetails/{time}")]
+        public ActionResult LinesDetails(int time)
+        {
+            var From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+            var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
+            {
+                From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+                To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(20) && DateTime.Now < (DateTime.Today.AddDays(1)).AddHours(8))
+            {
+                From = (DateTime.Today.AddHours(20)).AddMinutes(10);
+                To = ((DateTime.Today.AddDays(1)).AddHours(7)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(-4) && DateTime.Now < (DateTime.Today.AddHours(8)))
+            {
+                From = (DateTime.Today.AddHours(-4)).AddMinutes(10);
+                To = (DateTime.Today.AddHours(7)).AddMinutes(50);
+            }
+            if (time == 1)
+            {
+                var from =From;
+                var to = To;
+                var lines = _mContext.ProductionLines.Take(5).ToList();
+                
+                List<LineDetailsDTO> linesDetaila = new List<LineDetailsDTO>();
+                foreach (var line in lines)
+                {
+                    decimal mixAva = 0;
+                    decimal pallAva = 0;
+                    decimal fillAva = 0;
+                    decimal lablAva = 0;
+
+                    LineDetailsDTO lineDetails = new LineDetailsDTO
+                    {
+                        LineId = line.Id,
+                        From = from,
+                        To = to,
+                    };
+                    var energyLoads = _mContext.Loads.Where(r => r.EnergyCode != null && r.ProductionLineId == line.Id).Select(r => new { r.Id, r.EnergyCode, r.ProductionLineId, r.FactoryId, r.Name }).ToList();
+                    var energyLoadsCodes = _mContext.Loads.Where(r => r.EnergyCode != null && r.ProductionLineId == line.Id).Select(r => r.EnergyCode).ToList();
+
+                    var energyReads = _eContext.IotTransactions.OrderByDescending(r => r.Id).Where(r => energyLoadsCodes.Contains(r.SourceId) && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    foreach (var energyRead in energyLoads)
+                    {
+                        var energySource1 = energyReads.Where(r => r.SourceId == energyRead.EnergyCode).FirstOrDefault();
+                        var energySource2 = energyReads.Where(r => r.SourceId == energyRead.EnergyCode).LastOrDefault();
+                        var totalEnergy = (energySource1.Energy1 + energySource1.Energy2 + energySource1.Energy3) - (energySource2.Energy1 + energySource2.Energy2 + energySource2.Energy3);
+                        lineDetails.EnergyConsumption = totalEnergy;
+                    }
+                    lineDetails.PF = energyReads.Select(r => (r.PF1 + r.PF2 + r.PF3) / 3).Average();
+
+                    var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Co2_Consumption >= 0 && r.Co2_Consumption < 100 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
+
+                    var mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (mixerReads2.Any())
+                    {
+                        mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+
+                    var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Pallet_No >= 0 && r.Pallet_No <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Pallet_No >= 0 && r.Packet_No > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (pallReads2.Any())
+                    {
+                        pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (fillReads2.Any())
+                    {
+                        fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+
+                    }
+
+                    var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (dePallReads2.Any())
+                    {
+                        dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (labelReads2.Any())
+                    {
+                        labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (blowReads2.Any())
+                    {
+                        blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+
+                    if (mixerReads.Any())
+                    {
+                        var co2C1 = mixerReads.Select(r => r.Co2_Consumption).FirstOrDefault();
+                        var co2C2 = mixerReads.Select(r => r.Co2_Consumption).LastOrDefault();
+
+                        var sC1 = mixerReads.Select(r => r.Syrup_Consumption).FirstOrDefault();
+                        var sC2 = mixerReads.Select(r => r.Syrup_Consumption).LastOrDefault();
+
+                        var wC1 = mixerReads.Select(r => r.Water_Consumption).FirstOrDefault();
+                        var wC2 = mixerReads.Select(r => r.Water_Consumption).LastOrDefault();
+
+                        lineDetails.CO2 = (decimal)co2C1 - (decimal)co2C2;
+                        lineDetails.WC = (decimal)wC1 - (decimal)wC2;
+                        lineDetails.SC = (decimal)sC1 - (decimal)sC2;
+
+                        var stateReadsCount = mixerReads.Select(r => r.State).ToList().Count;
+                        var onReads = mixerReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        mixAva = (decimal)onReads / (decimal)stateReadsCount;
+
+                    }
+                    else
+                    {
+                        lineDetails.CO2 = 0;
+                        lineDetails.WC = 0;
+                        lineDetails.SC = 0;
+                    }
+                    if (pallReads.Any())
+                    {
+                        var pallC1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                        var pallC2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+
+                        var packC1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                        var packC2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+
+
+
+                        lineDetails.PackConsumption = (decimal)pallC1 - (decimal)pallC2;
+                        lineDetails.PalletConsumption = (decimal)packC1 - (decimal)packC2;
+                        var maxSpeed = 0;
+
+                        var minuteCount = (DateTime.Now - from).TotalMinutes;
+                        for (int i = 0; i < minuteCount; i += 60)
+                        {
+                            var currentTimeFrom = from.AddMinutes(i);
+                            var currentTimeTo = from.AddMinutes(i + 60);
+                            if (currentTimeTo >= DateTime.Now)
+                            {
+                                currentTimeFrom = from.AddMinutes(i - 60);
+                                currentTimeTo = from.AddMinutes(i);
+                            }
+                            var sC1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Pallet_No;
+                            var sC2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Pallet_No;
+                            var sC = sC1 - sC2;
+                            if (sC > maxSpeed)
+                            {
+                                maxSpeed = sC;
+                            }
+                            lineDetails.Speed = sC;
+                            if (maxSpeed == 0)
+                            {
+                                maxSpeed = 1;
+                            }
+                            lineDetails.Performance = (decimal)sC / (decimal)maxSpeed;
+
+                        }
+
+                        var stateReadsCount = pallReads.Select(r => r.State).ToList().Count;
+                        var onReads = pallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        pallAva = (decimal)onReads / (decimal)stateReadsCount;
+
+                        var lastFault = pallReads.OrderByDescending(r=>r.Id).Where(r=>r.Fault == 1).Select(r => new { r.Fault, r.TimeStamp }).FirstOrDefault();
+
+                        var faultReadsCount = pallReads.Select(r => r.Fault).ToList().Count;
+                        var faultReads = pallReads.Where(r => r.Fault == 1).Select(r => r.Fault).ToList().Count;
+                        var faultPercen = (decimal)faultReads / (decimal)faultReadsCount;
+                        lineDetails.FaultPerc = faultPercen;
+                        if(lastFault != null)
+                        {
+                            lineDetails.Fault = lastFault.Fault;
+                            lineDetails.TimeStamp = lastFault.TimeStamp;
+                        }
+                        else
+                        {
+                            lineDetails.Fault = 0;
+                            lineDetails.TimeStamp = DateTime.Now;
+                        }
+                        
+
+                    }
+                    else
+                    {
+                        lineDetails.PackConsumption = 0;
+                        lineDetails.PalletConsumption = 0;
+                    }
+                    if (fillReads.Any())
+                    {
+                        var bottleC1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                        var bottleC2 = fillReads.Select(r => r.Count).LastOrDefault();
+
+                        var pHC1 = fillReads.Select(r => r.Production_Hours).FirstOrDefault();
+                        var pHC2 = fillReads.Select(r => r.Production_Hours).LastOrDefault();
+
+                        var sC1 = fillReads.Select(r => r.Speed).Average();
+                        var msC1 = fillReads.Select(r => r.Speed).Max();
+
+
+                        lineDetails.BottleConsumption = (decimal)bottleC1 - (decimal)bottleC2;
+                        lineDetails.ProductionTime = ((decimal)pHC1 - (decimal)pHC2) / (decimal)12;
+                        lineDetails.ProductionHours = ((decimal)pHC1 - (decimal)pHC2);
+                        //lineDetails.Performance = sC1 / msC1;
+                        var stateReadsCount = fillReads.Select(r => r.State).ToList().Count;
+                        var onReads = fillReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        fillAva = (decimal)onReads / (decimal)stateReadsCount;
+
+                        lineDetails.Rinse = fillReads.Select(r => r.Rinse).FirstOrDefault();
+
+                    }
+                    else
+                    {
+                        lineDetails.BottleConsumption = 0;
+                        lineDetails.ProductionTime = 0;
+                        lineDetails.Speed = 0;
+                    }
+                    if (labelReads.Any())
+                    {
+                        var bottleC1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                        var bottleC2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                        var diff = (decimal)bottleC1 - (decimal)bottleC2;
+                        lineDetails.Quality = 1;
+                        if (lineDetails.Quality == 0)
+                        {
+                            lineDetails.Quality = 1;
+                        }
+
+                        var stateReadsCount = labelReads.Select(r => r.State).ToList().Count;
+                        var onReads = labelReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                        lablAva = (decimal)onReads / (decimal)stateReadsCount;
+                    }
+                    else if (line.Id == 2)
+                    {
+                        var signalReads = _sContext.SignalBrokerTypeThree.Where(r => r.TimeStamp >= from && r.TimeStamp <= to && r.In_Count > 0 && r.BrokerId == "L_Conv_02").ToList().Select(r => r.In_Count).Sum();
+                        lineDetails.Quality = 1;
+                        if (lineDetails.Quality == 0)
+                        {
+                            lineDetails.Quality = 1;
+                        }
+                    }
+                    else if (line.Id == 5)
+                    {
+                        var signalReads = _sContext.SignalBrokerTypeThree.Where(r => r.TimeStamp >= from && r.TimeStamp <= to && r.In_Count > 0 && r.BrokerId == "L_Labl_05").ToList().Select(r => r.In_Count).Sum();
+                        lineDetails.Quality = 1;
+                        if (lineDetails.Quality == 0)
+                        {
+                            lineDetails.Quality = 1;
+                        }
+                    }
+
+
+                    if (line.Id == 1)
+                    {
+                        lineDetails.Avalability = (pallAva + fillAva + lablAva) / (decimal)3;
+                    }
+                    else if (line.Id == 2)
+                    {
+                        lineDetails.Avalability = (pallAva + fillAva) / (decimal)2;
+                    }
+                    else if (line.Id == 3)
+                    {
+                        lineDetails.Avalability = (pallAva + fillAva + lablAva + mixAva) / (decimal)4;
+                    }
+                    else if (line.Id == 4)
+                    {
+                        lineDetails.Avalability = (pallAva + fillAva + lablAva) / (decimal)3;
+                    }
+                    else if (line.Id == 5)
+                    {
+                        lineDetails.Avalability = (pallAva + fillAva + mixAva) / (decimal)3;
+                    }
+                    lineDetails.OEE = lineDetails.Avalability * lineDetails.Performance * lineDetails.Quality;
+                    linesDetaila.Add(lineDetails);
+
+
+                }
+                FactoryDetailsDTO factoryDetails = new FactoryDetailsDTO
+                {
+                    LineId = 1,
+                    From = from,
+                    To = to,
+                    FactoryName = "Alex (ABI)",
+                    EnergyConsumption = linesDetaila.Select(r => r.EnergyConsumption).Sum(),
+                    BottleConsumption = linesDetaila.Select(r => r.BottleConsumption).Sum(),
+                    CO2 = linesDetaila.Select(r => r.CO2).Sum(),
+                    EnergyConsumptionUseIndex = linesDetaila.Select(r => r.EnergyConsumptionUseIndex).Sum(),
+                    PackConsumption = linesDetaila.Select(r => r.PackConsumption).Sum(),
+                    PalletConsumption = linesDetaila.Select(r => r.PalletConsumption).Sum(),
+                    SC = linesDetaila.Select(r => r.SC).Sum(),
+                    WC = linesDetaila.Select(r => r.WC).Sum(),
+                    Speed = linesDetaila.Select(r => r.Speed).Max(),
+                    ProductionTime = linesDetaila.Select(r => r.ProductionTime).Max(),
+                    PF = linesDetaila.Select(r => r.PF).Average(),
+                    ProductionHours = linesDetaila.Select(r => r.ProductionHours).Max()
+                };
+                return Ok(new { linesDetaila, factoryDetails });
+
+            }
+            return Ok();
+        }
+        [HttpGet("LineDetails/{id}")]
+        public ActionResult LineDetails(int id)
+        {
+            var From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+            var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
+            {
+                From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+                To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(20) && DateTime.Now < (DateTime.Today.AddDays(1)).AddHours(8))
+            {
+                From = (DateTime.Today.AddHours(20)).AddMinutes(10);
+                To = ((DateTime.Today.AddDays(1)).AddHours(7)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(-4) && DateTime.Now < (DateTime.Today.AddHours(8)))
+            {
+                From = (DateTime.Today.AddHours(-4)).AddMinutes(10);
+                To = (DateTime.Today.AddHours(7)).AddMinutes(50);
+            }
+            var from = From;
+                var to = To;
+                var lines = _mContext.ProductionLines.Where(r=>r.Id == id).ToList();
+                List<LineDetailsDTO> linesDetaila = new List<LineDetailsDTO>();
+            foreach (var line in lines)
+            {
+                decimal mixAva = 0;
+                decimal pallAva = 0;
+                decimal fillAva = 0;
+                decimal lablAva = 0;
+
+                LineDetailsDTO lineDetails = new LineDetailsDTO
+                {
+                    LineId = line.Id,
+                    From = from,
+                    To = to,
+                };
+                var energyLoads = _mContext.Loads.Where(r => r.EnergyCode != null && r.ProductionLineId == line.Id).Select(r => new { r.Id, r.EnergyCode, r.ProductionLineId, r.FactoryId, r.Name }).ToList();
+                var energyLoadsCodes = _mContext.Loads.Where(r => r.EnergyCode != null && r.ProductionLineId == line.Id).Select(r => r.EnergyCode).ToList();
+
+                var energyReads = _eContext.IotTransactions.OrderByDescending(r => r.Id).Where(r => energyLoadsCodes.Contains(r.SourceId) && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                foreach (var energyRead in energyLoads)
+                {
+                    var energySource1 = energyReads.Where(r => r.SourceId == energyRead.EnergyCode).FirstOrDefault();
+                    var energySource2 = energyReads.Where(r => r.SourceId == energyRead.EnergyCode).LastOrDefault();
+                    var totalEnergy = (energySource1.Energy1 + energySource1.Energy2 + energySource1.Energy3) - (energySource2.Energy1 + energySource2.Energy2 + energySource2.Energy3);
+                    lineDetails.EnergyConsumption = totalEnergy;
+                }
+                lineDetails.PF = energyReads.Select(r => (r.PF1 + r.PF2 + r.PF3) / 3).Average();
+
+                var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Co2_Consumption >= 0 && r.Co2_Consumption < 100 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
+
+                var mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                if (mixerReads2.Any())
+                {
+                    mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                }
+
+
+                var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Pallet_No >= 0 && r.Pallet_No <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Pallet_No >= 0 && r.Packet_No > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                if (pallReads2.Any())
+                {
+                    pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                }
+
+                var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                if (fillReads2.Any())
+                {
+                    fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+
+                }
+
+                var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                if (dePallReads2.Any())
+                {
+                    dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                }
+
+                var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                if (labelReads2.Any())
+                {
+                    labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                }
+
+                var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                if (blowReads2.Any())
+                {
+                    blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                }
+
+
+                if (mixerReads.Any())
+                {
+                    var co2C1 = mixerReads.Select(r => r.Co2_Consumption).FirstOrDefault();
+                    var co2C2 = mixerReads.Select(r => r.Co2_Consumption).LastOrDefault();
+
+                    var sC1 = mixerReads.Select(r => r.Syrup_Consumption).FirstOrDefault();
+                    var sC2 = mixerReads.Select(r => r.Syrup_Consumption).LastOrDefault();
+
+                    var wC1 = mixerReads.Select(r => r.Water_Consumption).FirstOrDefault();
+                    var wC2 = mixerReads.Select(r => r.Water_Consumption).LastOrDefault();
+
+                    lineDetails.CO2 = (decimal)co2C1 - (decimal)co2C2;
+                    lineDetails.WC = (decimal)wC1 - (decimal)wC2;
+                    lineDetails.SC = (decimal)sC1 - (decimal)sC2;
+
+                    var stateReadsCount = mixerReads.Select(r => r.State).ToList().Count;
+                    var onReads = mixerReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                    mixAva = (decimal)onReads / (decimal)stateReadsCount;
+
+                }
+                else
+                {
+                    lineDetails.CO2 = 0;
+                    lineDetails.WC = 0;
+                    lineDetails.SC = 0;
+                }
+                if (pallReads.Any())
+                {
+                    var pallC1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                    var pallC2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+
+                    var packC1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                    var packC2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+
+
+
+                    lineDetails.PackConsumption = (decimal)pallC1 - (decimal)pallC2;
+                    lineDetails.PalletConsumption = (decimal)packC1 - (decimal)packC2;
+                    var maxSpeed = 0;
+
+                    var minuteCount = (DateTime.Now - from).TotalMinutes;
+                    for (int i = 0; i < minuteCount; i += 60)
+                    {
+                        var currentTimeFrom = from.AddMinutes(i);
+                        var currentTimeTo = from.AddMinutes(i + 60);
+                        if (currentTimeTo >= DateTime.Now)
+                        {
+                            currentTimeFrom = from.AddMinutes(i - 60);
+                            currentTimeTo = from.AddMinutes(i);
+                        }
+                        var sC1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Pallet_No;
+                        var sC2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Pallet_No;
+                        var sC = sC1 - sC2;
+                        if(sC > maxSpeed)
+                        {
+                            maxSpeed = sC;
+                        }
+                        lineDetails.Speed = sC;
+                        if(maxSpeed == 0)
+                        {
+                            maxSpeed = 1;
+                        }
+                        lineDetails.Performance = (decimal)sC / (decimal)maxSpeed;
+
+                    }
+
+                    var stateReadsCount = pallReads.Select(r => r.State).ToList().Count;
+                    var onReads = pallReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                    pallAva = (decimal)onReads / (decimal)stateReadsCount;
+
+                }
+                else
+                {
+                    lineDetails.PackConsumption = 0;
+                    lineDetails.PalletConsumption = 0;
+                }
+                if (fillReads.Any())
+                {
+                    var bottleC1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                    var bottleC2 = fillReads.Select(r => r.Count).LastOrDefault();
+
+                    var pHC1 = fillReads.Select(r => r.Production_Hours).FirstOrDefault();
+                    var pHC2 = fillReads.Select(r => r.Production_Hours).LastOrDefault();
+
+                    var sC1 = fillReads.Select(r => r.Speed).Average();
+                    var msC1 = fillReads.Select(r => r.Speed).Max();
+
+
+                    lineDetails.BottleConsumption = (decimal)bottleC1 - (decimal)bottleC2;
+                    lineDetails.ProductionTime = ((decimal)pHC1 - (decimal)pHC2) / (decimal)12;
+                    lineDetails.ProductionHours = ((decimal)pHC1 - (decimal)pHC2);
+                    //lineDetails.Performance = sC1 / msC1;
+                    var stateReadsCount = fillReads.Select(r => r.State).ToList().Count;
+                    var onReads = fillReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                    fillAva = (decimal)onReads / (decimal)stateReadsCount;
+
+                }
+                else
+                {
+                    lineDetails.BottleConsumption = 0;
+                    lineDetails.ProductionTime = 0;
+                    lineDetails.Speed = 0;
+                }
+                if (labelReads.Any())
+                {
+                    var bottleC1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                    var bottleC2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                    var diff = (decimal)bottleC1 - (decimal)bottleC2;
+                    lineDetails.Quality = 1;
+                    if (lineDetails.Quality == 0)
+                    {
+                        lineDetails.Quality = 1;
+                    }
+
+                    var stateReadsCount = labelReads.Select(r => r.State).ToList().Count;
+                    var onReads = labelReads.Where(r => r.State == 1).Select(r => r.State).ToList().Count;
+                    lablAva = (decimal)onReads / (decimal)stateReadsCount;
+                }
+                else if (line.Id == 2)
+                {
+                    var signalReads = _sContext.SignalBrokerTypeThree.Where(r => r.TimeStamp >= from && r.TimeStamp <= to && r.In_Count > 0 && r.BrokerId == "L_Conv_02").ToList().Select(r => r.In_Count).Sum();
+                    lineDetails.Quality = 1;
+                    if (lineDetails.Quality == 0)
+                    {
+                        lineDetails.Quality = 1;
+                    }
+                }
+                else if (line.Id == 5)
+                {
+                    var signalReads = _sContext.SignalBrokerTypeThree.Where(r => r.TimeStamp >= from && r.TimeStamp <= to && r.In_Count > 0 && r.BrokerId == "L_Labl_05").ToList().Select(r => r.In_Count).Sum();
+                    lineDetails.Quality = 1;
+                    if (lineDetails.Quality == 0)
+                    {
+                        lineDetails.Quality = 1;
+                    }
+                }
+
+
+                if (line.Id == 1)
+                {
+                    lineDetails.Avalability = (pallAva + fillAva + lablAva) / (decimal)3;
+                }
+                else if (line.Id == 2)
+                {
+                    lineDetails.Avalability = (pallAva + fillAva) / (decimal)2;
+                }
+                else if (line.Id == 3)
+                {
+                    lineDetails.Avalability = (pallAva + fillAva + lablAva + mixAva) / (decimal)4;
+                }
+                else if (line.Id == 4)
+                {
+                    lineDetails.Avalability = (pallAva + fillAva + lablAva) / (decimal)3;
+                }
+                else if (line.Id == 5)
+                {
+                    lineDetails.Avalability = (pallAva + fillAva + mixAva) / (decimal)3;
+                }
+                lineDetails.OEE = lineDetails.Avalability * lineDetails.Performance * lineDetails.Quality;
+                linesDetaila.Add(lineDetails);
+
+
+            }
+
+            return Ok(linesDetaila);
+        }
+
+        [HttpGet("RouteRoot")]
+        public ActionResult RouteRoot()
+        {
+            var From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+            var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
+            {
+                From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+                To = (DateTime.Today.AddHours(19)).AddMinutes(50);
+            }
+            else if ( DateTime.Now > DateTime.Today.AddHours(20) &&  DateTime.Now < (DateTime.Today.AddDays(1)).AddHours(8))
+            {
+                From = (DateTime.Today.AddHours(20)).AddMinutes(10);
+                To = ((DateTime.Today.AddDays(1)).AddHours(7)).AddMinutes(50);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(-4) && DateTime.Now < (DateTime.Today.AddHours(8)))
+            {
+                From = (DateTime.Today.AddHours(-4)).AddMinutes(10);
+                To = (DateTime.Today.AddHours(7)).AddMinutes(50);
+            }
+            var from = From;
+                var to = To;
+                
+                  
+                    List<RouteRootDTO> routeRootDTOs = new List<RouteRootDTO>();
+            var recipes = _mContext.ProductionLines.Take(5).ToList();
+            foreach (var recipe in recipes)
+            {
+                var actualProcess = _mContext.Loads.Where(r => r.ProductionLineId == recipe.Id && r.PlcCode != null).ToList();
+                RouteRootDTO routeRootDTO = new RouteRootDTO
+                {
+                    name = recipe.Name,
+
+                };
+                ProcessMaterialDTO processMaterialDTO = new ProcessMaterialDTO
+                {
+                    name = "",
+                };
+                ProcessTreeDTO processTreeDTO = new ProcessTreeDTO
+                {
+                    name = "",
+                };
+                MaterialNameDTO materialNameDTO = new MaterialNameDTO
+                {
+                    name = "",
+                };
+                MaterialNameDTO materialNameDTO2 = new MaterialNameDTO
+                {
+                    name = "",
+                };
+                MaterialNameDTO materialNameDTO3 = new MaterialNameDTO
+                {
+                    name = "",
+                };
+                foreach (var process in actualProcess)
+                {
+                    
+                    var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Co2_Consumption >= 0 && r.Co2_Consumption < 100 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
+
+                    var mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (mixerReads2.Any())
+                    {
+                        mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+
+                    var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Pallet_No == 0 && r.Pallet_No <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Pallet_No >= 0 && r.Packet_No > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (pallReads2.Any())
+                    {
+                        pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (fillReads2.Any())
+                    {
+                        fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+
+                    }
+
+                    var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (dePallReads2.Any())
+                    {
+                        dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (labelReads2.Any())
+                    {
+                        labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (blowReads2.Any())
+                    {
+                        blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+                    var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0  && r.Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    if (cartReads2.Any())
+                    {
+                        cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                    }
+
+
+                    
+
+                    
+                    
+                    
+                    
+                    
+                    if (recipe.Id == 1)
+                    {
+                        
+                        
+                        if (pallReads.Any())
+                        {
+                            
+                            var pallC1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                            var pallC2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+
+                            var packC1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                            var packC2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+
+                            var pallets = pallC1 - pallC2;
+                            var pack = packC1 - packC2;
+
+                            
+                            
+                            routeRootDTO.name = process.Name + ": " + pallets + " Pallet";
+                        }
+                        if (labelReads.Any())
+                        {
+                           
+                            var bottleC1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                            var bottleC2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+
+                            processTreeDTO.name = process.Name + ": " + diff + " Bottle";
+                            routeRootDTO.children.Add(processTreeDTO);
+                            
+                        }
+                        if (fillReads.Any())
+                        {
+                            
+                            var bottleC1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                            var bottleC2 = fillReads.Select(r => r.Count).LastOrDefault();
+
+                            var bottle = bottleC1 - bottleC2;
+
+                            processMaterialDTO.name = process.Name + ": " + bottle + " Bottle";
+
+                            processTreeDTO.children.Add(processMaterialDTO);
+                        }
+                        if (dePallReads.Any())
+                        {
+                           
+                            var bottleC1 = dePallReads.Select(r => r.Count).FirstOrDefault();
+                            var bottleC2 = dePallReads.Select(r => r.Count).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+                            materialNameDTO.name = process.Name + ": " + diff + " Bottle";
+                            
+                            processMaterialDTO.children.Add(materialNameDTO);
+                        }
+                        
+                    }
+                    else if(recipe.Id == 2)
+                    {
+                        if (cartReads.Any())
+                        {
+                            var bottleC1 = cartReads.Select(r => r.Counts).FirstOrDefault();
+                            var bottleC2 = cartReads.Select(r => r.Counts).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+
+                            routeRootDTO.name = process.Name + ": " + diff + " Bottle";
+                        }
+                        if (pallReads.Any())
+                        {
+
+                            var pallC1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                            var pallC2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+
+                            var packC1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                            var packC2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+
+                            var pallets = pallC1 - pallC2;
+                            var pack = packC1 - packC2;
+
+
+
+                            processTreeDTO.name = process.Name + ": " + pallets + " Pallet";
+                            routeRootDTO.children.Add(processTreeDTO);
+                        }
+                        if (fillReads.Any())
+                        {
+
+                            var bottleC1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                            var bottleC2 = fillReads.Select(r => r.Count).LastOrDefault();
+
+                            var bottle = bottleC1 - bottleC2;
+
+                            processMaterialDTO.name = process.Name + ": " + bottle + " Bottle";
+
+                            processTreeDTO.children.Add(processMaterialDTO);
+                        }
+                    }
+                    else if(recipe.Id == 3)
+                    {
+                        if (cartReads.Any())
+                        {
+                            var bottleC1 = cartReads.Select(r => r.Counts).FirstOrDefault();
+                            var bottleC2 = cartReads.Select(r => r.Counts).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+
+                            routeRootDTO.name = process.Name + ": " + diff + " Bottle";
+                        }
+                        if (pallReads.Any())
+                        {
+
+                            var pallC1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                            var pallC2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+
+                            var packC1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                            var packC2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+
+                            var pallets = pallC1 - pallC2;
+                            var pack = packC1 - packC2;
+
+
+
+                            processTreeDTO.name = process.Name + ": " + pallets + " Pallet";
+                            routeRootDTO.children.Add(processTreeDTO);
+                        }
+                        if (labelReads.Any())
+                        {
+
+                            var bottleC1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                            var bottleC2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+
+                            processMaterialDTO.name = process.Name + ": " + diff + " Bottle";
+                            processTreeDTO.children.Add(processMaterialDTO);
+
+                        }
+                        if (fillReads.Any())
+                        {
+
+                            var bottleC1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                            var bottleC2 = fillReads.Select(r => r.Count).LastOrDefault();
+
+                            var bottle = bottleC1 - bottleC2;
+
+                            materialNameDTO.name = process.Name + ": " + bottle + " Bottle";
+
+                            processMaterialDTO.children.Add(materialNameDTO);
+                        }
+                        if (mixerReads.Any())
+                        {
+
+                            var co2C1 = mixerReads.Select(r => r.Co2_Consumption).FirstOrDefault();
+                            var co2C2 = mixerReads.Select(r => r.Co2_Consumption).LastOrDefault();
+
+                            var sC1 = mixerReads.Select(r => r.Syrup_Consumption).FirstOrDefault();
+                            var sC2 = mixerReads.Select(r => r.Syrup_Consumption).LastOrDefault();
+
+                            var wC1 = mixerReads.Select(r => r.Water_Consumption).FirstOrDefault();
+                            var wC2 = mixerReads.Select(r => r.Water_Consumption).LastOrDefault();
+
+                            var cO2 = (co2C1 - co2C2).ToString();
+                            var sC = (sC1 - sC2).ToString();
+                            var wC = (wC1 - wC2).ToString();
+
+                            materialNameDTO2.name = process.Name + ": Syrup " + (sC) + " L" + ": Syrup " + (wC) + " L" + ": Syrup " + (cO2) + " KG";
+                            materialNameDTO.children.Add(materialNameDTO2);
+                        }
+                        if (blowReads.Any())
+                        {
+                            var bottleC1 = blowReads.Select(r => r.Count_Out).FirstOrDefault();
+                            var bottleC2 = blowReads.Select(r => r.Count_Out).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+
+                            materialNameDTO3.name = process.Name + " : " + diff + " Bottle";
+
+                            materialNameDTO2.children.Add(materialNameDTO3);
+                        }
+                    }
+                    else if (recipe.Id == 4)
+                    {
+                        if (pallReads.Any())
+                        {
+
+                            var pallC1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                            var pallC2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+
+                            var packC1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                            var packC2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+
+                            var pallets = pallC1 - pallC2;
+                            var pack = packC1 - packC2;
+
+
+
+                            routeRootDTO.name = process.Name + ": " + pallets + " Pallet";
+
+                        }
+                        if (labelReads.Any())
+                        {
+
+                            var bottleC1 = labelReads.Select(r => r.Counts).FirstOrDefault();
+                            var bottleC2 = labelReads.Select(r => r.Counts).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+
+                            processTreeDTO.name = process.Name + ": " + diff + " Bottle";
+                            routeRootDTO.children.Add(processTreeDTO);
+                        }
+                        if (fillReads.Any())
+                        {
+
+                            var bottleC1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                            var bottleC2 = fillReads.Select(r => r.Count).LastOrDefault();
+
+                            var bottle = bottleC1 - bottleC2;
+
+                            processMaterialDTO.name = process.Name + ": " + bottle + " Bottle";
+
+                            processTreeDTO.children.Add(processMaterialDTO);
+                        }
+                    }
+                    else if (recipe.Id == 5)
+                    {
+                        if (pallReads.Any())
+                        {
+
+                            var pallC1 = pallReads.Select(r => r.Pallet_No).FirstOrDefault();
+                            var pallC2 = pallReads.Select(r => r.Pallet_No).LastOrDefault();
+
+                            var packC1 = pallReads.Select(r => r.Packet_No).FirstOrDefault();
+                            var packC2 = pallReads.Select(r => r.Packet_No).LastOrDefault();
+
+                            var pallets = pallC1 - pallC2;
+                            var pack = packC1 - packC2;
+
+                            routeRootDTO.name = process.Name + ": " + pallets + " Pallet";
+
+                        }
+                        if (fillReads.Any())
+                        {
+
+                            var bottleC1 = fillReads.Select(r => r.Count).FirstOrDefault();
+                            var bottleC2 = fillReads.Select(r => r.Count).LastOrDefault();
+
+                            var bottle = bottleC1 - bottleC2;
+
+                            processTreeDTO.name = process.Name + ": " + bottle + " Bottle";
+                            routeRootDTO.children.Add(processTreeDTO);
+                        }
+                        if (mixerReads.Any())
+                        {
+
+                            var co2C1 = mixerReads.Select(r => r.Co2_Consumption).FirstOrDefault();
+                            var co2C2 = mixerReads.Select(r => r.Co2_Consumption).LastOrDefault();
+
+                            var sC1 = mixerReads.Select(r => r.Syrup_Consumption).FirstOrDefault();
+                            var sC2 = mixerReads.Select(r => r.Syrup_Consumption).LastOrDefault();
+
+                            var wC1 = mixerReads.Select(r => r.Water_Consumption).FirstOrDefault();
+                            var wC2 = mixerReads.Select(r => r.Water_Consumption).LastOrDefault();
+
+                            var cO2 = (co2C1 - co2C2).ToString();
+                            var sC = (sC1 - sC2).ToString();
+                            var wC = (wC1 - wC2).ToString();
+
+                            processMaterialDTO.name = process.Name + ": Syrup " + (sC) + " L" + ": Syrup " + (wC) + " L" + ": Syrup " + (cO2) + " KG";
+                            processTreeDTO.children.Add(processMaterialDTO);
+                        }
+                        if (blowReads.Any())
+                        {
+                            var bottleC1 = blowReads.Select(r => r.Count_Out).FirstOrDefault();
+                            var bottleC2 = blowReads.Select(r => r.Count_Out).LastOrDefault();
+                            var diff = (decimal)bottleC1 - (decimal)bottleC2;
+
+                            materialNameDTO.name = process.Name + " : " + diff + " Bottle";
+
+                            processMaterialDTO.children.Add(materialNameDTO);
+                        }
+
+                    }
+
+
+
+                }
+                routeRootDTOs.Add(routeRootDTO);
+            }
+
+            return Ok(routeRootDTOs);
+        }
+        /*[HttpGet("GetLinesProcess")]
+        public ActionResult GetLinesProcess()
+        {
+
+        }*/
+
         // PUT: api/Plc/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.

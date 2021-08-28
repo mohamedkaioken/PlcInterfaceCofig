@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PlcInterface.Models;
+using PlcInterface.Models.CocaMesModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace PlcInterface.Context
         public DbSet<DPalletizer> DPalletizers { get; set; }
         public DbSet<Mixer> Mixers { get; set; }
         public DbSet<Cartonizer_Shrink> Cartonizers_Shrinks { get; set; }
+        public DbSet<MixerConsumption> MixerConsumptions { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 

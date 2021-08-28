@@ -10,6 +10,7 @@ namespace PlcInterface.Context
     public class SignalContext : DbContext
     {
         public DbSet<SignalBroker> SignalBroker { get; set; }
+        public DbSet<SignalBrokerTypeThree> SignalBrokerTypeThree { get; set; }
         public SignalContext(DbContextOptions<SignalContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
