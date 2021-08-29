@@ -30,6 +30,7 @@ namespace PlcInterface.Models.DTO
         public decimal OverAllMTBF { get; set; }
         public decimal OverAllUpTime { get; set; }
         public List<StateTime> StateTimes { get; set; } = new List<StateTime>();
+        public List<LineKPIData> LineData { get; set; } = new List<LineKPIData>();
         public DateTime from { get; set; }
         public DateTime to { get; set; }
 

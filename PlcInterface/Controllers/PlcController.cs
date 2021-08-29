@@ -6754,7 +6754,7 @@ namespace PlcInterface.Controllers
                     }
 
                     var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.Speed >= 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (fillReads2.Any())
                     {
                         fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -6762,28 +6762,28 @@ namespace PlcInterface.Controllers
                     }
 
                     var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (dePallReads2.Any())
                     {
                         dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (labelReads2.Any())
                     {
                         labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (cartReads2.Any())
                     {
                         cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (blowReads2.Any())
                     {
                         blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -7608,7 +7608,7 @@ namespace PlcInterface.Controllers
                         }
 
                         var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                        var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.Speed >= 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                         if (fillReads2.Any())
                         {
                             fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -7616,28 +7616,28 @@ namespace PlcInterface.Controllers
                         }
 
                         var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                        var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                         if (dePallReads2.Any())
                         {
                             dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                         }
 
                         var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                        var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                         if (labelReads2.Any())
                         {
                             labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                         }
 
                         var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                        var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                         if (cartReads2.Any())
                         {
                            cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                         }
 
                         var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                        var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                        var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                         if (blowReads2.Any())
                         {
                             blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == load.PlcCode  && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -8109,7 +8109,7 @@ namespace PlcInterface.Controllers
         [HttpGet("MachineKPIs/{MachineId}")]
         public ActionResult MachineKPIs(string MachineId)
         {
-            var From = (DateTime.Today.AddHours(8));
+            /*var From = (DateTime.Today.AddHours(8));
             var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
             if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
             {
@@ -8125,68 +8125,94 @@ namespace PlcInterface.Controllers
             {
                 From = (DateTime.Today.AddHours(-4));
                 To = (DateTime.Today.AddHours(7)).AddMinutes(50);
+            }*/
+            var From = (DateTime.Today.AddHours(8));
+            var To = (DateTime.Today.AddHours(19)).AddMinutes(45);
+            if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
+            {
+                From = (DateTime.Today.AddHours(8));
+                To = (DateTime.Today.AddHours(19)).AddMinutes(45);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(20) && DateTime.Now < (DateTime.Today.AddDays(1)).AddHours(8))
+            {
+                From = (DateTime.Today.AddHours(8));
+                To = (DateTime.Today.AddHours(19)).AddMinutes(45);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(-4) && DateTime.Now < (DateTime.Today.AddHours(8)))
+            {
+                From = (DateTime.Today.AddHours(-4));
+                To = (DateTime.Today.AddHours(7)).AddMinutes(45);
             }
             var from = From;
             var to = To;
             int Count = 0;
+            
+            
             var mixerReads2 = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Co2_Consumption >= 0 && r.Co2_Consumption < 100 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to);
 
             var mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (mixerReads2.Any())
             {
+                from = mixerReads2.Select(r => r.TimeStamp).LastOrDefault();
                 mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
             }
             var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count == 0 && r.Count <= 1000 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-            var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+            var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.Speed >= 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (fillReads2.Any())
             {
-                fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                from = fillReads2.Select(r => r.TimeStamp).LastOrDefault();
+                fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
 
             }
 
             var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-            var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+            var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (dePallReads2.Any())
             {
-                dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                from = dePallReads2.Select(r => r.TimeStamp).LastOrDefault();
+                dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
             }
 
             var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-            var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+            var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (labelReads2.Any())
             {
-                labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                from = labelReads2.Select(r => r.TimeStamp).LastOrDefault();
+                labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
             }
 
             var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-            var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+            var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (cartReads2.Any())
             {
-                cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                from = cartReads2.Select(r => r.TimeStamp).LastOrDefault();
+                cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
             }
 
             var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-            var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+            var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (blowReads2.Any())
             {
-                blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                from = blowReads2.Select(r => r.TimeStamp).LastOrDefault();
+                blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
             }
             var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Pallet_No >= 0 && r.Pallet_No <= 200 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             var pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Pallet_No >= 0 && r.Packet_No > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (pallReads2.Any())
             {
-                pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
+                pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Pallet_No >= 0 && r.TimeStamp >= pallReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
                 from = pallReads2.Select(r => r.TimeStamp).LastOrDefault();
             }
             var loadDetails = _mContext.Loads.Where(r => r.PlcCode == MachineId).FirstOrDefault();
-            MachineKPIs machine = new MachineKPIs { from = from, to = to, MachineId = MachineId,MachineName = loadDetails.Name };
+            MachineKPIs machine = new MachineKPIs { from = from, to = to, MachineId = MachineId, MachineName = loadDetails.Name };
             if (pallReads.Any())
             {
                 /*foreach (var read in pallReads.OrderBy(r=>r.Id))
                 {
                     if(read.Pallet_No == 0 || read.Pallet_No )
                 }*/
-                var reads = pallReads.OrderBy(r => r.Id).Where(r=>r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
+                machine.MachineType = "Palletizer";
+                var reads = pallReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
                 var readsAll = pallReads.OrderBy(r => r.Id).ToList();
                 decimal timeChange = 0;
                 List<DateTime> dates = new List<DateTime>();
@@ -8194,123 +8220,7 @@ namespace PlcInterface.Controllers
 
                 for (int i = 1; i < reads.Count; i++)
                 {
-                    var count = reads[i].Pallet_No - reads[i-1].Pallet_No;
-                    if(count ==0)
-                    {
-                        dates.Add(reads[i].TimeStamp);
-                    }
-                }
-                machine.ChangeOverTime = (decimal)(dates.LastOrDefault() - dates.FirstOrDefault()).TotalMinutes;
-                var totalReads = pallReads.Count;
-                var stateOneReads = pallReads.Where(r => r.State == 1).ToList().Count;
-                var stateZeroReads = pallReads.Where(r => r.State == 0).ToList().Count;
-                var faultReadsCount = pallReads.Where(r => r.Fault == 1 && r.State == 0).ToList().Count;
-                var faultReads = pallReads.Where(r => r.Fault == 1 && r.State == 0).ToList();
-                var Counter = 0;
-                for (int i = 1; i < faultReads.Count; i++)
-                {
-                    if((faultReads[i-1].TimeStamp - faultReads[i].TimeStamp).TotalSeconds < 30)
-                    {
-                        
-                        Count++;
-                        if(Count >=2)
-                        {
-                            Count = 0;
-                            Counter++;
-                        }
-                        
-                    }
-                }
-                faultReadsCount = faultReadsCount - Counter;
-                if(faultReadsCount == 0)
-                {
-                    faultReadsCount = 1;
-                }
-                machine.Availability = (decimal)stateOneReads / (decimal)totalReads;
-
-                var productionHours = pallReads.FirstOrDefault().Production_Hours - pallReads.LastOrDefault().Production_Hours;
-                var producedUnits = pallReads.FirstOrDefault().Pallet_No - pallReads.LastOrDefault().Pallet_No;
-                machine.CycleTime = (decimal)productionHours / (decimal)producedUnits;
-                machine.ProductionHours = productionHours;
-                machine.Production_OutPut = producedUnits;
-
-                for (int i = 1; i < readsAll.Count; i++)
-                {
-                    if(readsAll[i].State != readsAll[i-1].State)
-                    {
-                        upTime.Add(readsAll[i].TimeStamp);
-                    }
-                }
-                decimal value = 0;
-                for (int i = 1; i < upTime.Count; i++)
-                {
-                    
-                    value = (decimal)(value + (decimal)(upTime[i] - upTime[i - 1]).TotalHours);
-                }
-                machine.UpTime = value;
-                var upTimeReads = upTime.ToList();
-                var maxSpeed = 0;
-                var minuteCount = (pallReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
-                for (int i = 0; i < minuteCount; i += 60)
-                {
-                    OEEDTO perValue = new OEEDTO { };
-                    OEEDTO avaValue = new OEEDTO { };
-                    var currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
-                    var currentTimeTo = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i + 60);
-                    if (currentTimeTo >= DateTime.Now)
-                    {
-                        currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
-                        currentTimeTo = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
-                    }
-                    var sC1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Pallet_No;
-                    var sC2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Pallet_No;
-
-                    var avaCount = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
-                    var avaCount2 = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                    var sC = sC1 - sC2;
-                    machine.Throughput = sC;
-                    if (sC > maxSpeed)
-                    {
-                        maxSpeed = sC;
-                        machine.Max_Production_Capacity = maxSpeed;
-                    }
-                    if (maxSpeed == 0)
-                    {
-                        maxSpeed = 1;
-                    }
-                    machine.Performance = (decimal)sC / (decimal)maxSpeed;
-                    
-
-                }
-                machine.Quality = 1;
-                machine.Utiliztion = (decimal)712 / (decimal)720;
-                machine.OEE = machine.Availability * machine.Performance * machine.Quality;
-
-                machine.TEEP = machine.Utiliztion * machine.OEE;
-                //machine.UpTime = (decimal)(stateOneReads * 20)/(decimal)3600;
-                var time = (DateTime.Now - from).TotalHours;
-                machine.TotalDownTime = (decimal)time - (decimal)machine.UpTime;
-
-                machine.MTBF = (decimal) machine.UpTime / (decimal)faultReadsCount;
-
-
-
-            }
-            if (mixerReads.Any())
-            {
-                /*foreach (var read in pallReads.OrderBy(r=>r.Id))
-                {
-                    if(read.Pallet_No == 0 || read.Pallet_No )
-                }*/
-                var reads = mixerReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
-                var readsAll = mixerReads.OrderBy(r => r.Id).ToList();
-                decimal timeChange = 0;
-                List<DateTime> dates = new List<DateTime>();
-                List<DateTime> upTime = new List<DateTime>();
-
-                for (int i = 1; i < reads.Count; i++)
-                {
-                    var count = reads[i].Product_Consumption - reads[i - 1].Product_Consumption;
+                    var count = reads[i].Pallet_No - reads[i - 1].Pallet_No;
                     if (count == 0)
                     {
                         dates.Add(reads[i].TimeStamp);
@@ -8346,16 +8256,28 @@ namespace PlcInterface.Controllers
 
                 var productionHours = pallReads.FirstOrDefault().Production_Hours - pallReads.LastOrDefault().Production_Hours;
                 var producedUnits = pallReads.FirstOrDefault().Pallet_No - pallReads.LastOrDefault().Pallet_No;
+                if (producedUnits == 0)
+                {
+                    producedUnits = 1;
+                }
                 machine.CycleTime = (decimal)productionHours / (decimal)producedUnits;
                 machine.ProductionHours = productionHours;
                 machine.Production_OutPut = producedUnits;
-
                 for (int i = 1; i < readsAll.Count; i++)
                 {
+
+                    StateTime state = new StateTime
+                    {
+                        State = readsAll[i].State,Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i-1].TimeStamp,
+                        EndTime = readsAll[i+1].TimeStamp,
+                    };
                     if (readsAll[i].State != readsAll[i - 1].State)
                     {
                         upTime.Add(readsAll[i].TimeStamp);
                     }
+                    machine.StateTimes.Add(state);
+
                 }
                 decimal value = 0;
                 for (int i = 1; i < upTime.Count; i++)
@@ -8369,6 +8291,7 @@ namespace PlcInterface.Controllers
                 var minuteCount = (pallReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
                 for (int i = 0; i < minuteCount; i += 60)
                 {
+                   
                     OEEDTO perValue = new OEEDTO { };
                     OEEDTO avaValue = new OEEDTO { };
                     var currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
@@ -8378,9 +8301,22 @@ namespace PlcInterface.Controllers
                         currentTimeFrom = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                         currentTimeTo = pallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                     }
+                    LineKPIData data = new LineKPIData
+                    {
+                        MachineName = loadDetails.Name,
+                        TimeStamp = currentTimeFrom
+                    };
                     var sC1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Pallet_No;
                     var sC2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Pallet_No;
+                    var pH1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Production_Hours;
+                    var pH2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Production_Hours;
+                    
+                    var t1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().TimeStamp;
+                    var t2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().TimeStamp;
+                    var t = (t1 - t2).TotalHours;
+                    data.Uptime = (decimal)t;
 
+                    var pH = pH1 - pH2;
                     var avaCount = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                     var avaCount2 = pallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
                     var sC = sC1 - sC2;
@@ -8393,6 +8329,151 @@ namespace PlcInterface.Controllers
                     if (maxSpeed == 0)
                     {
                         maxSpeed = 1;
+                    }
+                    if(sC == 0)
+                    {
+                        sC = 1;
+                    }    
+                    machine.Performance = (decimal)sC / (decimal)maxSpeed;
+                    data.Performance = machine.Performance;
+                    data.Availability = (decimal)avaCount / (decimal)avaCount2;
+                    data.Quality = 1;
+                    data.OEE = data.Performance * data.Availability * data.Quality;
+                    data.Throughput = sC;
+                    data.ProductionOutPut = sC1;
+                    data.CycleTime = (decimal)pH / (decimal)sC;
+                    machine.LineData.Add(data);
+
+                }
+                machine.Quality = 1;
+                machine.Utiliztion = (decimal)712 / (decimal)720;
+                machine.OEE = machine.Availability * machine.Performance * machine.Quality;
+
+                machine.TEEP = machine.Utiliztion * machine.OEE;
+                //machine.UpTime = (decimal)(stateOneReads * 20)/(decimal)3600;
+                var time = (DateTime.Now - from).TotalHours;
+                machine.TotalDownTime = (decimal)time - (decimal)machine.UpTime;
+
+                machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
+                machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
+
+
+
+
+            }
+            if (mixerReads.Any())
+            {
+                /*foreach (var read in pallReads.OrderBy(r=>r.Id))
+                {
+                    if(read.Pallet_No == 0 || read.Pallet_No )
+                }*/
+                machine.MachineType = "Mixer";
+                var reads = mixerReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
+                var readsAll = mixerReads.OrderBy(r => r.Id).ToList();
+                decimal timeChange = 0;
+                List<DateTime> dates = new List<DateTime>();
+                List<DateTime> upTime = new List<DateTime>();
+
+                for (int i = 1; i < reads.Count; i++)
+                {
+                    var count = reads[i].Product_Consumption - reads[i - 1].Product_Consumption;
+                    if (count == 0)
+                    {
+                        dates.Add(reads[i].TimeStamp);
+                    }
+                }
+                machine.ChangeOverTime = (decimal)(dates.LastOrDefault() - dates.FirstOrDefault()).TotalMinutes;
+                var totalReads = mixerReads.Count;
+                var stateOneReads = mixerReads.Where(r => r.State == 1).ToList().Count;
+                var stateZeroReads = mixerReads.Where(r => r.State == 0).ToList().Count;
+                var faultReadsCount = mixerReads.Where(r => r.Fault == 1 && r.State == 0).ToList().Count;
+                var faultReads = mixerReads.Where(r => r.Fault == 1 && r.State == 0).ToList();
+                var Counter = 0;
+                for (int i = 1; i < faultReads.Count; i++)
+                {
+                    if ((faultReads[i - 1].TimeStamp - faultReads[i].TimeStamp).TotalSeconds < 30)
+                    {
+
+                        Count++;
+                        if (Count >= 2)
+                        {
+                            Count = 0;
+                            Counter++;
+                        }
+
+                    }
+                }
+                faultReadsCount = faultReadsCount - Counter;
+                if (faultReadsCount == 0)
+                {
+                    faultReadsCount = 1;
+                }
+                machine.Availability = (decimal)stateOneReads / (decimal)totalReads;
+
+                var productionHours = mixerReads.FirstOrDefault().Production_Hours - mixerReads.LastOrDefault().Production_Hours;
+                var producedUnits = mixerReads.FirstOrDefault().Product_Consumption - mixerReads.LastOrDefault().Product_Consumption;
+                if (producedUnits == 0)
+                {
+                    producedUnits = 1;
+                }
+                machine.CycleTime = (decimal)productionHours / (decimal)producedUnits;
+                machine.ProductionHours = productionHours;
+                machine.Production_OutPut = producedUnits;
+
+                for (int i = 1; i < readsAll.Count; i++)
+                {
+                    StateTime state = new StateTime
+                    {
+                        State = readsAll[i].State,Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i-1].TimeStamp,
+                        EndTime = readsAll[i ].TimeStamp,
+                    };
+                    if (readsAll[i].State != readsAll[i - 1].State)
+                    {
+                        upTime.Add(readsAll[i].TimeStamp);
+                    }
+                    machine.StateTimes.Add(state);
+                }
+                decimal value = 0;
+                for (int i = 1; i < upTime.Count; i++)
+                {
+
+                    value = (decimal)(value + (decimal)(upTime[i] - upTime[i - 1]).TotalHours);
+                }
+                machine.UpTime = value;
+                var upTimeReads = upTime.ToList();
+                decimal maxSpeed = 0;
+                var minuteCount = (mixerReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - mixerReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
+                for (int i = 0; i < minuteCount; i += 60)
+                {
+                    OEEDTO perValue = new OEEDTO { };
+                    OEEDTO avaValue = new OEEDTO { };
+                    var currentTimeFrom = mixerReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                    var currentTimeTo = mixerReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i + 60);
+                    if (currentTimeTo >= DateTime.Now)
+                    {
+                        currentTimeFrom = mixerReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
+                        currentTimeTo = mixerReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
+                    }
+                    var sC1 = mixerReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Product_Consumption;
+                    var sC2 = mixerReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Product_Consumption;
+
+                    var avaCount = mixerReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
+                    var avaCount2 = mixerReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
+                    var sC = sC1 - sC2;
+                    machine.Throughput = sC;
+                    if (sC > maxSpeed)
+                    {
+                        maxSpeed = (decimal)sC;
+                        machine.Max_Production_Capacity = maxSpeed;
+                    }
+                    if (maxSpeed == 0)
+                    {
+                        maxSpeed = 1;
+                    }
+                    if (sC == 0)
+                    {
+                        sC = 1;
                     }
                     machine.Performance = (decimal)sC / (decimal)maxSpeed;
 
@@ -8408,7 +8489,7 @@ namespace PlcInterface.Controllers
                 machine.TotalDownTime = (decimal)time - (decimal)machine.UpTime;
 
                 machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
-
+                machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
 
 
             }
@@ -8418,6 +8499,7 @@ namespace PlcInterface.Controllers
                 {
                     if(read.Pallet_No == 0 || read.Pallet_No )
                 }*/
+                machine.MachineType = "Filler";
                 var reads = fillReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
                 var readsAll = fillReads.OrderBy(r => r.Id).ToList();
                 decimal timeChange = 0;
@@ -8468,10 +8550,17 @@ namespace PlcInterface.Controllers
 
                 for (int i = 1; i < readsAll.Count; i++)
                 {
+                    StateTime state = new StateTime
+                    {
+                        State = readsAll[i].State,Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i-1].TimeStamp,
+                        EndTime = readsAll[i ].TimeStamp,
+                    };
                     if (readsAll[i].State != readsAll[i - 1].State)
                     {
                         upTime.Add(readsAll[i].TimeStamp);
                     }
+                    machine.StateTimes.Add(state);
                 }
                 decimal value = 0;
                 for (int i = 1; i < upTime.Count; i++)
@@ -8494,11 +8583,17 @@ namespace PlcInterface.Controllers
                         currentTimeFrom = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                         currentTimeTo = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                     }
-                    var sC1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
-                    
+                    var sC1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Count;
+                    var sC2 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Count;
+                    var pH1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Production_Hours;
+                    var pH2 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Production_Hours;
+
+                    var pH = pH1 - pH2;
                     var avaCount = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                     var avaCount2 = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                    var sC = sC1 ;
+                    var sC = sC1 - sC2;
+                    LineKPIData lineData = new LineKPIData { TimeStamp = currentTimeFrom };
+
                     machine.Throughput = sC;
                     if (sC > maxSpeed)
                     {
@@ -8509,8 +8604,15 @@ namespace PlcInterface.Controllers
                     {
                         maxSpeed = 1;
                     }
+                    if (sC == 0)
+                    {
+                        sC = 1;
+                    }
                     machine.Performance = (decimal)sC / (decimal)maxSpeed;
-
+                    lineData.Throughput = sC;
+                    lineData.ProductionOutPut = sC1;
+                    lineData.CycleTime = (decimal)pH / (decimal)sC;
+                    machine.LineData.Add(lineData);
 
                 }
                 machine.Quality = 1;
@@ -8524,8 +8626,7 @@ namespace PlcInterface.Controllers
 
                 machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
 
-
-
+                machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
             }
             if (dePallReads.Any())
             {
@@ -8533,6 +8634,7 @@ namespace PlcInterface.Controllers
                 {
                     if(read.Pallet_No == 0 || read.Pallet_No )
                 }*/
+                machine.MachineType = "DPalletizer";
                 var reads = dePallReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
                 var readsAll = dePallReads.OrderBy(r => r.Id).ToList();
                 decimal timeChange = 0;
@@ -8583,10 +8685,17 @@ namespace PlcInterface.Controllers
 
                 for (int i = 1; i < readsAll.Count; i++)
                 {
+                    StateTime state = new StateTime
+                    {
+                        State = readsAll[i].State,Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i-1].TimeStamp,
+                        EndTime = readsAll[i ].TimeStamp,
+                    };
                     if (readsAll[i].State != readsAll[i - 1].State)
                     {
                         upTime.Add(readsAll[i].TimeStamp);
                     }
+                    machine.StateTimes.Add(state);
                 }
                 decimal value = 0;
                 for (int i = 1; i < upTime.Count; i++)
@@ -8609,11 +8718,15 @@ namespace PlcInterface.Controllers
                         currentTimeFrom = dePallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                         currentTimeTo = dePallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                     }
-                    var sC1 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+
+                    var sC1 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Count;
+                    var sC2 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Count;
+
+
 
                     var avaCount = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                     var avaCount2 = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                    var sC = sC1;
+                    var sC = sC1 - sC2;
                     machine.Throughput = sC;
                     if (sC > maxSpeed)
                     {
@@ -8623,6 +8736,10 @@ namespace PlcInterface.Controllers
                     if (maxSpeed == 0)
                     {
                         maxSpeed = 1;
+                    }
+                    if (sC == 0)
+                    {
+                        sC = 1;
                     }
                     machine.Performance = (decimal)sC / (decimal)maxSpeed;
 
@@ -8639,8 +8756,7 @@ namespace PlcInterface.Controllers
 
                 machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
 
-
-
+                machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
             }
             if (labelReads.Any())
             {
@@ -8648,6 +8764,7 @@ namespace PlcInterface.Controllers
                 {
                     if(read.Pallet_No == 0 || read.Pallet_No )
                 }*/
+                machine.MachineType = "Label";
                 var reads = labelReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
                 var readsAll = labelReads.OrderBy(r => r.Id).ToList();
                 decimal timeChange = 0;
@@ -8692,16 +8809,27 @@ namespace PlcInterface.Controllers
 
                 var productionHours = labelReads.FirstOrDefault().Hours - labelReads.LastOrDefault().Hours;
                 var producedUnits = labelReads.FirstOrDefault().Counts - labelReads.LastOrDefault().Counts;
+                if (producedUnits == 0)
+                {
+                    producedUnits = 1;
+                }
                 machine.CycleTime = (decimal)productionHours / (decimal)producedUnits;
                 machine.ProductionHours = productionHours;
                 machine.Production_OutPut = producedUnits;
 
                 for (int i = 1; i < readsAll.Count; i++)
                 {
+                    StateTime state = new StateTime
+                    {
+                        State = readsAll[i].State,Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i-1].TimeStamp,
+                        EndTime = readsAll[i ].TimeStamp,
+                    };
                     if (readsAll[i].State != readsAll[i - 1].State)
                     {
                         upTime.Add(readsAll[i].TimeStamp);
                     }
+                    machine.StateTimes.Add(state);
                 }
                 decimal value = 0;
                 for (int i = 1; i < upTime.Count; i++)
@@ -8724,11 +8852,12 @@ namespace PlcInterface.Controllers
                         currentTimeFrom = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                         currentTimeTo = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                     }
-                    var sC1 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+                    var sC1 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Counts;
+                    var sC2 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Counts;
 
                     var avaCount = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                     var avaCount2 = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                    var sC = sC1;
+                    var sC = sC1 - sC2;
                     machine.Throughput = sC;
                     if (sC > maxSpeed)
                     {
@@ -8753,8 +8882,7 @@ namespace PlcInterface.Controllers
                 machine.TotalDownTime = (decimal)time - (decimal)machine.UpTime;
 
                 machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
-
-
+                machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
             }
             if (cartReads.Any())
             {
@@ -8762,6 +8890,7 @@ namespace PlcInterface.Controllers
                 {
                     if(read.Pallet_No == 0 || read.Pallet_No )
                 }*/
+                machine.MachineType = "Cart";
                 var reads = cartReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
                 var readsAll = cartReads.OrderBy(r => r.Id).ToList();
                 decimal timeChange = 0;
@@ -8806,16 +8935,27 @@ namespace PlcInterface.Controllers
 
                 var productionHours = cartReads.FirstOrDefault().Hours - cartReads.LastOrDefault().Hours;
                 var producedUnits = cartReads.FirstOrDefault().Counts - cartReads.LastOrDefault().Counts;
+                if (producedUnits == 0)
+                {
+                    producedUnits = 1;
+                }
                 machine.CycleTime = (decimal)productionHours / (decimal)producedUnits;
                 machine.ProductionHours = productionHours;
                 machine.Production_OutPut = producedUnits;
 
                 for (int i = 1; i < readsAll.Count; i++)
                 {
+                    StateTime state = new StateTime
+                    {
+                        State = readsAll[i].State,Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i-1].TimeStamp,
+                        EndTime = readsAll[i ].TimeStamp,
+                    };
                     if (readsAll[i].State != readsAll[i - 1].State)
                     {
                         upTime.Add(readsAll[i].TimeStamp);
                     }
+                    machine.StateTimes.Add(state);
                 }
                 decimal value = 0;
                 for (int i = 1; i < upTime.Count; i++)
@@ -8838,11 +8978,12 @@ namespace PlcInterface.Controllers
                         currentTimeFrom = cartReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                         currentTimeTo = cartReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                     }
-                    var sC1 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+                    var sC1 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Counts;
+                    var sC2 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Counts;
 
                     var avaCount = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                     var avaCount2 = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                    var sC = sC1;
+                    var sC = sC1 - sC2;
                     machine.Throughput = sC;
                     if (sC > maxSpeed)
                     {
@@ -8867,8 +9008,7 @@ namespace PlcInterface.Controllers
                 machine.TotalDownTime = (decimal)time - (decimal)machine.UpTime;
 
                 machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
-
-
+                machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
 
             }
             if (blowReads.Any())
@@ -8877,6 +9017,7 @@ namespace PlcInterface.Controllers
                 {
                     if(read.Pallet_No == 0 || read.Pallet_No )
                 }*/
+                machine.MachineType = "Blow";
                 var reads = blowReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
                 var readsAll = blowReads.OrderBy(r => r.Id).ToList();
                 decimal timeChange = 0;
@@ -8921,16 +9062,27 @@ namespace PlcInterface.Controllers
 
                 var productionHours = blowReads.FirstOrDefault().Production_Hours - blowReads.LastOrDefault().Production_Hours;
                 var producedUnits = blowReads.FirstOrDefault().Count_Out - blowReads.LastOrDefault().Count_Out;
+                if (producedUnits == 0)
+                {
+                    producedUnits = 1;
+                }
                 machine.CycleTime = (decimal)productionHours / (decimal)producedUnits;
                 machine.ProductionHours = productionHours;
                 machine.Production_OutPut = producedUnits;
 
                 for (int i = 1; i < readsAll.Count; i++)
                 {
+                    StateTime state = new StateTime
+                    {
+                        State = readsAll[i].State,Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i-1].TimeStamp,
+                        EndTime = readsAll[i ].TimeStamp,
+                    };
                     if (readsAll[i].State != readsAll[i - 1].State)
                     {
                         upTime.Add(readsAll[i].TimeStamp);
                     }
+                    machine.StateTimes.Add(state);
                 }
                 decimal value = 0;
                 for (int i = 1; i < upTime.Count; i++)
@@ -8953,11 +9105,12 @@ namespace PlcInterface.Controllers
                         currentTimeFrom = blowReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                         currentTimeTo = blowReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                     }
-                    var sC1 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+                    var sC1 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Count_Out;
+                    var sC2 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Count_Out;
 
                     var avaCount = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                     var avaCount2 = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                    var sC = sC1;
+                    var sC = sC1 - sC2;
                     machine.Throughput = sC;
                     if (sC > maxSpeed)
                     {
@@ -8982,7 +9135,7 @@ namespace PlcInterface.Controllers
                 machine.TotalDownTime = (decimal)time - (decimal)machine.UpTime;
 
                 machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
-
+                machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
 
             }
             return Ok(machine);
@@ -9021,41 +9174,47 @@ namespace PlcInterface.Controllers
                 var mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (mixerReads2.Any())
                 {
+                    from = mixerReads2.Select(r => r.TimeStamp).LastOrDefault();
                     mixerReads = _context.Mixers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Co2_Consumption >= 0 && r.Syrup_Consumption > 0 && r.Water_Consumption > 0 && r.TimeStamp >= mixerReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                 }
                 var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count == 0 && r.Count <= 1000 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count >= 0 && r.Speed >= 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (fillReads2.Any())
                 {
+                    from = fillReads2.Select(r => r.TimeStamp).LastOrDefault();
                     fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
 
                 }
 
                 var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (dePallReads2.Any())
                 {
+                    from = dePallReads2.Select(r => r.TimeStamp).LastOrDefault();
                     dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
                 }
 
                 var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (labelReads2.Any())
                 {
+                    from = labelReads2.Select(r => r.TimeStamp).LastOrDefault();
                     labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
                 }
 
                 var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (cartReads2.Any())
                 {
+                    from = cartReads2.Select(r => r.TimeStamp).LastOrDefault();
                     cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
                 }
 
                 var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (blowReads2.Any())
                 {
+                    from = blowReads2.Select(r => r.TimeStamp).LastOrDefault();
                     blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
                 }
                 var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId.PlcCode && r.Pallet_No >= 0 && r.Pallet_No <= 200 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
@@ -9125,16 +9284,19 @@ namespace PlcInterface.Controllers
                     machine.Production_OutPut = producedUnits;
                     for (int i = 1; i < readsAll.Count; i++)
                     {
+
                         StateTime state = new StateTime
                         {
-                            State = readsAll[i].State,
-                            TimeStamp = readsAll[i].TimeStamp
+                            State = readsAll[i].State,Fault = readsAll[i].Fault,
+                            StartTime = readsAll[i-1].TimeStamp,
+                            EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
                             upTime.Add(readsAll[i].TimeStamp);
                         }
                         machine.StateTimes.Add(state);
+
                     }
                     decimal value = 0;
                     for (int i = 1; i < upTime.Count; i++)
@@ -9257,8 +9419,9 @@ namespace PlcInterface.Controllers
                     {
                         StateTime state = new StateTime
                         {
-                            State = readsAll[i].State,
-                            TimeStamp = readsAll[i].TimeStamp
+                            State = readsAll[i].State,Fault = readsAll[i].Fault,
+                            StartTime = readsAll[i-1].TimeStamp,
+                            EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
@@ -9381,8 +9544,9 @@ namespace PlcInterface.Controllers
                     {
                         StateTime state = new StateTime
                         {
-                            State = readsAll[i].State,
-                            TimeStamp = readsAll[i].TimeStamp
+                            State = readsAll[i].State,Fault = readsAll[i].Fault,
+                            StartTime = readsAll[i-1].TimeStamp,
+                            EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
@@ -9411,11 +9575,17 @@ namespace PlcInterface.Controllers
                             currentTimeFrom = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                             currentTimeTo = fillReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                         }
-                        var sC1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+                        var sC1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Count;
+                        var sC2 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Count;
+                        var pH1 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Production_Hours;
+                        var pH2 = fillReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Production_Hours;
 
+                        var pH = pH1 - pH2;
                         var avaCount = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                         var avaCount2 = fillReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                        var sC = sC1;
+                        var sC = sC1-sC2;
+                        LineKPIData lineData = new LineKPIData { TimeStamp = currentTimeFrom };
+
                         machine.Throughput = sC;
                         if (sC > maxSpeed)
                         {
@@ -9426,8 +9596,15 @@ namespace PlcInterface.Controllers
                         {
                             maxSpeed = 1;
                         }
+                        if (sC == 0)
+                        {
+                            sC = 1;
+                        }
                         machine.Performance = (decimal)sC / (decimal)maxSpeed;
-
+                        lineData.Throughput = sC;
+                        lineData.ProductionOutPut = sC1;
+                        lineData.CycleTime = (decimal)pH / (decimal)sC;
+                        machine.LineData.Add(lineData);
 
                     }
                     machine.Quality = 1;
@@ -9503,8 +9680,9 @@ namespace PlcInterface.Controllers
                     {
                         StateTime state = new StateTime
                         {
-                            State = readsAll[i].State,
-                            TimeStamp = readsAll[i].TimeStamp
+                            State = readsAll[i].State,Fault = readsAll[i].Fault,
+                            StartTime = readsAll[i-1].TimeStamp,
+                            EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
@@ -9533,11 +9711,15 @@ namespace PlcInterface.Controllers
                             currentTimeFrom = dePallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                             currentTimeTo = dePallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                         }
-                        var sC1 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+
+                        var sC1 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Count;
+                        var sC2 = dePallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Count;
+
+                        
 
                         var avaCount = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                         var avaCount2 = dePallReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                        var sC = sC1;
+                        var sC = sC1-sC2;
                         machine.Throughput = sC;
                         if (sC > maxSpeed)
                         {
@@ -9549,7 +9731,7 @@ namespace PlcInterface.Controllers
                             maxSpeed = 1;
                         }
                         machine.Performance = (decimal)sC / (decimal)maxSpeed;
-
+                       
 
                     }
                     machine.Quality = 1;
@@ -9629,8 +9811,9 @@ namespace PlcInterface.Controllers
                     {
                         StateTime state = new StateTime
                         {
-                            State = readsAll[i].State,
-                            TimeStamp = readsAll[i].TimeStamp
+                            State = readsAll[i].State,Fault = readsAll[i].Fault,
+                            StartTime = readsAll[i-1].TimeStamp,
+                            EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
@@ -9659,11 +9842,12 @@ namespace PlcInterface.Controllers
                             currentTimeFrom = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                             currentTimeTo = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                         }
-                        var sC1 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+                        var sC1 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Counts;
+                        var sC2 = labelReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Counts;
 
                         var avaCount = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                         var avaCount2 = labelReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                        var sC = sC1;
+                        var sC = sC1 - sC2;
                         machine.Throughput = sC;
                         if (sC > maxSpeed)
                         {
@@ -9754,8 +9938,9 @@ namespace PlcInterface.Controllers
                     {
                         StateTime state = new StateTime
                         {
-                            State = readsAll[i].State,
-                            TimeStamp = readsAll[i].TimeStamp
+                            State = readsAll[i].State,Fault = readsAll[i].Fault,
+                            StartTime = readsAll[i-1].TimeStamp,
+                            EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
@@ -9784,11 +9969,12 @@ namespace PlcInterface.Controllers
                             currentTimeFrom = cartReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                             currentTimeTo = cartReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                         }
-                        var sC1 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+                        var sC1 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Counts;
+                        var sC2 = cartReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Counts;
 
                         var avaCount = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                         var avaCount2 = cartReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                        var sC = sC1;
+                        var sC = sC1-sC2;
                         machine.Throughput = sC;
                         if (sC > maxSpeed)
                         {
@@ -9880,8 +10066,9 @@ namespace PlcInterface.Controllers
                     {
                         StateTime state = new StateTime
                         {
-                            State = readsAll[i].State,
-                            TimeStamp = readsAll[i].TimeStamp
+                            State = readsAll[i].State,Fault = readsAll[i].Fault,
+                            StartTime = readsAll[i-1].TimeStamp,
+                            EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
@@ -9910,11 +10097,12 @@ namespace PlcInterface.Controllers
                             currentTimeFrom = blowReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i - 60);
                             currentTimeTo = blowReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
                         }
-                        var sC1 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Speed;
+                        var sC1 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Count_Out;
+                        var sC2 = blowReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Count_Out;
 
                         var avaCount = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo && e.State == 1).ToList().Count;
                         var avaCount2 = blowReads.Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).ToList().Count;
-                        var sC = sC1;
+                        var sC = sC1-sC2;
                         machine.Throughput = sC;
                         if (sC > maxSpeed)
                         {
@@ -10027,7 +10215,7 @@ namespace PlcInterface.Controllers
                     }
 
                     var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed >= 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (fillReads2.Any())
                     {
                         fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -10035,21 +10223,21 @@ namespace PlcInterface.Controllers
                     }
 
                     var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (dePallReads2.Any())
                     {
                         dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (labelReads2.Any())
                     {
                         labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (blowReads2.Any())
                     {
                         blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -10266,7 +10454,7 @@ namespace PlcInterface.Controllers
         [HttpGet("LineDetails/{id}")]
         public ActionResult LineDetails(int id)
         {
-            var From = (DateTime.Today.AddHours(8)).AddMinutes(20);
+            /*var From = (DateTime.Today.AddHours(8)).AddMinutes(20);
             var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
             if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
             {
@@ -10282,6 +10470,23 @@ namespace PlcInterface.Controllers
             {
                 From = (DateTime.Today.AddHours(-4)).AddMinutes(10);
                 To = (DateTime.Today.AddHours(7)).AddMinutes(50);
+            }*/
+            var From = (DateTime.Today.AddHours(8));
+            var To = (DateTime.Today.AddHours(19)).AddMinutes(45);
+            if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
+            {
+                From = (DateTime.Today.AddHours(8));
+                To = (DateTime.Today.AddHours(19)).AddMinutes(45);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(20) && DateTime.Now < (DateTime.Today.AddDays(1)).AddHours(8))
+            {
+                From = (DateTime.Today.AddHours(8));
+                To = (DateTime.Today.AddHours(19)).AddMinutes(45);
+            }
+            else if (DateTime.Now > DateTime.Today.AddHours(-4) && DateTime.Now < (DateTime.Today.AddHours(8)))
+            {
+                From = (DateTime.Today.AddHours(-4));
+                To = (DateTime.Today.AddHours(7)).AddMinutes(45);
             }
             var from = From;
                 var to = To;
@@ -10330,7 +10535,7 @@ namespace PlcInterface.Controllers
                 }
 
                 var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed >= 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (fillReads2.Any())
                 {
                     fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -10338,21 +10543,21 @@ namespace PlcInterface.Controllers
                 }
 
                 var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (dePallReads2.Any())
                 {
                     dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                 }
 
                 var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (labelReads2.Any())
                 {
                     labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                 }
 
                 var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                 if (blowReads2.Any())
                 {
                     blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.Line == line.Id && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -10600,7 +10805,7 @@ namespace PlcInterface.Controllers
                     }
 
                     var fillReads2 = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.Speed >= 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (fillReads2.Any())
                     {
                         fillReads = _context.Fillers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.TimeStamp >= fillReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
@@ -10608,28 +10813,28 @@ namespace PlcInterface.Controllers
                     }
 
                     var dePallReads2 = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count == 0 && r.Count <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (dePallReads2.Any())
                     {
                         dePallReads = _context.DPalletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count >= 0 && r.TimeStamp >= dePallReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var labelReads2 = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0 && r.Speed > 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0 && r.Speed >= 0 && r.Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (labelReads2.Any())
                     {
                         labelReads = _context.Labels.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0 && r.TimeStamp >= labelReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var blowReads2 = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count_In == 0 && r.Count_In <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count_In >= 0 && r.Count_Out > 0 && r.Production_Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (blowReads2.Any())
                     {
                         blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();
                     }
 
                     var cartReads2 = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts == 0 && r.Counts <= 100 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
-                    var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0  && r.Hours > 0 && r.Speed > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+                    var cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0  && r.Hours > 0 && r.Speed >= 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
                     if (cartReads2.Any())
                     {
                         cartReads = _context.Cartonizers_Shrinks.OrderByDescending(r => r.Id).Where(r => r.MachineId == process.PlcCode && r.Counts >= 0 && r.TimeStamp >= cartReads2.Select(r => r.TimeStamp).LastOrDefault()).ToList();

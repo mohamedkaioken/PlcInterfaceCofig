@@ -8,6 +8,8 @@ namespace PlcInterface.Models.DTO
     public class StateTime
     {
         public int State { get; set; }
-        public DateTime TimeStamp { get; set; }
+        public int Fault { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
 }
