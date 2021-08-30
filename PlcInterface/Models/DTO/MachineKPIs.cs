@@ -12,8 +12,11 @@ namespace PlcInterface.Models.DTO
         public string MachineType { get; set; }
         public decimal Availability { get; set; }
         public decimal Performance { get; set; }
+        public decimal MPerformance { get; set; }
         public decimal Quality { get; set; }
         public decimal OEE { get; set; }
+        public decimal MOEE { get; set; }
+        public decimal MAVA { get; set; }
         public decimal TEEP { get; set; }
         public decimal Utiliztion { get; set; }
         public decimal MTBF { get; set; }
@@ -29,8 +32,12 @@ namespace PlcInterface.Models.DTO
         public decimal OverAllOEE { get; set; }
         public decimal OverAllMTBF { get; set; }
         public decimal OverAllUpTime { get; set; }
+        public decimal ChangeTimeCount { get; set; }
+        public decimal WaitingCount { get; set; }
+        public decimal BreakdownCount { get; set; }
         public List<StateTime> StateTimes { get; set; } = new List<StateTime>();
         public List<LineKPIData> LineData { get; set; } = new List<LineKPIData>();
+        public List<LineKPIData> MonthlyData { get; set; } = new List<LineKPIData>();
         public DateTime from { get; set; }
         public DateTime to { get; set; }
 

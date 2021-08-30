@@ -8109,7 +8109,7 @@ namespace PlcInterface.Controllers
         [HttpGet("MachineKPIs/{MachineId}")]
         public ActionResult MachineKPIs(string MachineId)
         {
-            /*var From = (DateTime.Today.AddHours(8));
+           /* var From = (DateTime.Today.AddHours(8));
             var To = (DateTime.Today.AddHours(19)).AddMinutes(50);
             if (DateTime.Now > DateTime.Today.AddHours(8) && DateTime.Now < DateTime.Today.AddHours(20))
             {
@@ -8196,7 +8196,7 @@ namespace PlcInterface.Controllers
                 from = blowReads2.Select(r => r.TimeStamp).LastOrDefault();
                 blowReads = _context.Blow_Moulders.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Count_In >= 0 && r.TimeStamp >= blowReads2.Select(r => r.TimeStamp).LastOrDefault() && r.TimeStamp <= to).ToList();
             }
-            var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Pallet_No >= 0 && r.Pallet_No <= 200 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
+            var pallReads2 = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Pallet_No == 0 && r.Pallet_No <= 200 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             var pallReads = _context.Palletizers.OrderByDescending(r => r.Id).Where(r => r.MachineId == MachineId && r.Pallet_No >= 0 && r.Packet_No > 0 && r.Production_Hours > 0 && r.TimeStamp >= from && r.TimeStamp <= to).ToList();
             if (pallReads2.Any())
             {
@@ -8211,6 +8211,34 @@ namespace PlcInterface.Controllers
                 {
                     if(read.Pallet_No == 0 || read.Pallet_No )
                 }*/
+                var fromMonth = DateTime.Today.AddMonths(-1);
+                var toMonth = DateTime.Today;
+                
+                decimal avgNo = 0;
+                DateTime firstTimeStamp = new DateTime { };
+                DateTime lastTimeStamp = new DateTime { };
+                List<int> palletsCount = new List<int>();
+                /*var monthlyReads = _context.Palletizers.Where(r => r.MachineId == MachineId && r.Pallet_No >= 0 && r.Packet_No >= 0 && r.Production_Hours >= 0 && r.TimeStamp >= fromMonth && r.TimeStamp <= toMonth).ToList();
+                foreach (var read in monthlyReads)
+                {
+                    
+                    if(read.Pallet_No == 0)
+                    {
+                        if(monthlyReads.OrderByDescending(r => r.Id).Where(r=>r.TimeStamp < read.TimeStamp).FirstOrDefault().Pallet_No != 0)
+                        {
+                           
+                            palletsCount.Add(monthlyReads.OrderByDescending(r=>r.Id).Where(r => r.TimeStamp < read.TimeStamp).FirstOrDefault().Pallet_No);
+                        }
+                    }
+                }
+                var readsss = palletsCount;
+                machine.MPerformance = ((decimal)palletsCount.Sum()/(decimal)30);
+                machine.MAVA = palletsCount.Max();*/
+                /*machine.MAVA = machine.MonthlyData.Select(r => r.Availability).Average();
+                machine.MOEE = machine.MonthlyData.Select(r => r.OEE).Average();*/
+
+
+
                 machine.MachineType = "Palletizer";
                 var reads = pallReads.OrderBy(r => r.Id).Where(r => r.TimeStamp >= from && r.TimeStamp < from.AddMinutes(10)).ToList();
                 var readsAll = pallReads.OrderBy(r => r.Id).ToList();
@@ -8226,6 +8254,9 @@ namespace PlcInterface.Controllers
                         dates.Add(reads[i].TimeStamp);
                     }
                 }
+                machine.ChangeTimeCount = dates.Count;
+                machine.BreakdownCount = readsAll.Where(r => r.State == 0 && r.Fault == 1).ToList().Count;
+                machine.WaitingCount = readsAll.Where(r => r.State == 0 && r.Fault == 0).ToList().Count;
                 machine.ChangeOverTime = (decimal)(dates.LastOrDefault() - dates.FirstOrDefault()).TotalMinutes;
                 var totalReads = pallReads.Count;
                 var stateOneReads = pallReads.Where(r => r.State == 1).ToList().Count;
@@ -8268,9 +8299,10 @@ namespace PlcInterface.Controllers
 
                     StateTime state = new StateTime
                     {
-                        State = readsAll[i].State,Fault = readsAll[i].Fault,
-                        StartTime = readsAll[i-1].TimeStamp,
-                        EndTime = readsAll[i+1].TimeStamp,
+                        State = readsAll[i].State,
+                        Fault = readsAll[i].Fault,
+                        StartTime = readsAll[i - 1].TimeStamp,
+                        EndTime = readsAll[i].TimeStamp,
                     };
                     if (readsAll[i].State != readsAll[i - 1].State)
                     {
@@ -8304,7 +8336,7 @@ namespace PlcInterface.Controllers
                     LineKPIData data = new LineKPIData
                     {
                         MachineName = loadDetails.Name,
-                        TimeStamp = currentTimeFrom
+                        TimeStamp = currentTimeTo
                     };
                     var sC1 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).FirstOrDefault().Pallet_No;
                     var sC2 = pallReads.OrderByDescending(r => r.Id).Where(e => e.TimeStamp >= currentTimeFrom && e.TimeStamp <= currentTimeTo).LastOrDefault().Pallet_No;
@@ -8334,8 +8366,7 @@ namespace PlcInterface.Controllers
                     {
                         sC = 1;
                     }    
-                    machine.Performance = (decimal)sC / (decimal)maxSpeed;
-                    data.Performance = machine.Performance;
+                    data.Performance = (decimal)sC/(decimal)maxSpeed;
                     data.Availability = (decimal)avaCount / (decimal)avaCount2;
                     data.Quality = 1;
                     data.OEE = data.Performance * data.Availability * data.Quality;
@@ -8345,10 +8376,15 @@ namespace PlcInterface.Controllers
                     machine.LineData.Add(data);
 
                 }
+                var lineCount = machine.LineData.Count;
+                machine.LineData = machine.LineData.ToList().ToList();
+                machine.Performance = (decimal)machine.LineData.Select(r=>r.Performance).Average();
+                machine.Availability = (decimal)machine.LineData.Select(r=>r.Availability).Average();
+                
                 machine.Quality = 1;
                 machine.Utiliztion = (decimal)712 / (decimal)720;
                 machine.OEE = machine.Availability * machine.Performance * machine.Quality;
-
+                //machine.MOEE = avaMonth * machine.Performance * machine.Quality;
                 machine.TEEP = machine.Utiliztion * machine.OEE;
                 //machine.UpTime = (decimal)(stateOneReads * 20)/(decimal)3600;
                 var time = (DateTime.Now - from).TotalHours;
@@ -8692,6 +8728,10 @@ namespace PlcInterface.Controllers
                         EndTime = readsAll[i ].TimeStamp,
                     };
                     if (readsAll[i].State != readsAll[i - 1].State)
+                    {
+                        upTime.Add(readsAll[i].TimeStamp);
+                    }
+                    else if(readsAll[i].State == 1)
                     {
                         upTime.Add(readsAll[i].TimeStamp);
                     }
@@ -9427,6 +9467,11 @@ namespace PlcInterface.Controllers
                         {
                             upTime.Add(readsAll[i].TimeStamp);
                         }
+
+                        else if (readsAll[i].State == 1)
+                        {
+                            upTime.Add(readsAll[i].TimeStamp);
+                        }
                         machine.StateTimes.Add(state);
                     }
                     decimal value = 0;
@@ -9550,8 +9595,21 @@ namespace PlcInterface.Controllers
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
                         {
+                            
                             upTime.Add(readsAll[i].TimeStamp);
                         }
+                        else if (readsAll[i].State == 1 && readsAll[i-1].State ==0)
+                        {
+                            
+                            upTime.Add(readsAll[i].TimeStamp);
+                        }
+                        else if (readsAll[i].State == 1 && readsAll[i - 1].State == 1)
+                        {
+
+                            upTime.Add(readsAll[i].TimeStamp);
+                        }
+
+
                         machine.StateTimes.Add(state);
                     }
                     decimal value = 0;
@@ -9617,9 +9675,9 @@ namespace PlcInterface.Controllers
                     machine.TotalDownTime = (decimal)time - (decimal)machine.UpTime;
 
                     machine.MTBF = (decimal)machine.UpTime / (decimal)faultReadsCount;
-
-                    machines.Add(machine);
                     machine.OverAllUpTime = (decimal)machine.UpTime / (decimal)time;
+                    machines.Add(machine);
+                    
                 }
                 if (dePallReads.Any())
                 {
@@ -9688,6 +9746,11 @@ namespace PlcInterface.Controllers
                         {
                             upTime.Add(readsAll[i].TimeStamp);
                         }
+
+                        else if (readsAll[i].State == 1)
+                        {
+                            upTime.Add(readsAll[i].TimeStamp);
+                        }
                         machine.StateTimes.Add(state);
                     }
                     decimal value = 0;
@@ -9702,6 +9765,7 @@ namespace PlcInterface.Controllers
                     var minuteCount = (dePallReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - dePallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
                     for (int i = 0; i < minuteCount; i += 60)
                     {
+                        LineKPIData data = new LineKPIData { };
                         OEEDTO perValue = new OEEDTO { };
                         OEEDTO avaValue = new OEEDTO { };
                         var currentTimeFrom = dePallReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
@@ -9730,10 +9794,19 @@ namespace PlcInterface.Controllers
                         {
                             maxSpeed = 1;
                         }
-                        machine.Performance = (decimal)sC / (decimal)maxSpeed;
-                       
+                        data.Performance = (decimal)sC / (decimal)maxSpeed;
+                        data.Availability = (decimal)avaCount / (decimal)avaCount2;
+                        data.Quality = 1;
+                        data.OEE = data.Performance * data.Availability * data.Quality;
+                        machine.LineData.Add(data);
+
 
                     }
+                    var lineCount = machine.LineData.Count;
+                    machine.LineData = machine.LineData.ToList().Take(lineCount - 1).ToList();
+                    machine.Performance = (decimal)machine.LineData.Select(r => r.Performance).Average();
+                    machine.Availability = (decimal)machine.LineData.Select(r => r.Availability).Average();
+                    
                     machine.Quality = 1;
                     machine.Utiliztion = (decimal)712 / (decimal)720;
                     machine.OEE = machine.Availability * machine.Performance * machine.Quality;
@@ -9819,6 +9892,11 @@ namespace PlcInterface.Controllers
                         {
                             upTime.Add(readsAll[i].TimeStamp);
                         }
+
+                        else if (readsAll[i].State == 1)
+                        {
+                            upTime.Add(readsAll[i].TimeStamp);
+                        }
                         machine.StateTimes.Add(state);
                     }
                     decimal value = 0;
@@ -9833,6 +9911,7 @@ namespace PlcInterface.Controllers
                     var minuteCount = (labelReads.OrderByDescending(r => r.Id).FirstOrDefault().TimeStamp - labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp).TotalMinutes;
                     for (int i = 0; i < minuteCount; i += 60)
                     {
+                        LineKPIData data = new LineKPIData { };
                         OEEDTO perValue = new OEEDTO { };
                         OEEDTO avaValue = new OEEDTO { };
                         var currentTimeFrom = labelReads.OrderByDescending(r => r.Id).LastOrDefault().TimeStamp.AddMinutes(i);
@@ -9858,10 +9937,17 @@ namespace PlcInterface.Controllers
                         {
                             maxSpeed = 1;
                         }
-                        machine.Performance = (decimal)sC / (decimal)maxSpeed;
-
+                        data.Performance = (decimal)sC / (decimal)maxSpeed;
+                        data.Availability = (decimal)avaCount / (decimal)avaCount2;
+                        data.Quality = 1;
+                        data.OEE = data.Performance * data.Availability * data.Quality;
+                        machine.LineData.Add(data);
 
                     }
+                    var lineCount = machine.LineData.Count;
+                    machine.LineData = machine.LineData.ToList().Take(lineCount - 1).ToList();
+                    machine.Performance = (decimal)machine.LineData.Select(r => r.Performance).Average();
+                    machine.Availability = (decimal)machine.LineData.Select(r => r.Availability).Average();
                     machine.Quality = 1;
                     machine.Utiliztion = (decimal)712 / (decimal)720;
                     machine.OEE = machine.Availability * machine.Performance * machine.Quality;
@@ -9943,6 +10029,11 @@ namespace PlcInterface.Controllers
                             EndTime = readsAll[i ].TimeStamp,
                         };
                         if (readsAll[i].State != readsAll[i - 1].State)
+                        {
+                            upTime.Add(readsAll[i].TimeStamp);
+                        }
+
+                        else if (readsAll[i].State == 1)
                         {
                             upTime.Add(readsAll[i].TimeStamp);
                         }
@@ -10074,6 +10165,11 @@ namespace PlcInterface.Controllers
                         {
                             upTime.Add(readsAll[i].TimeStamp);
                         }
+
+                        else if (readsAll[i].State == 1)
+                        {
+                            upTime.Add(readsAll[i].TimeStamp);
+                        }
                         machine.StateTimes.Add(state);
                     }
                     decimal value = 0;
@@ -10134,7 +10230,7 @@ namespace PlcInterface.Controllers
             }
             var avgOEE = machines.Select(r => r.OEE).Average();
             var avgMTBF = machines.Select(r => r.MTBF).Average();
-            var avgUpTime = machines.Select(r => r.OverAllUpTime).Average();
+            var avgUpTime = machines.Select(r => r.Availability).Average();
             var oee = machines.Where(r=>r.MachineType == "Filler").Select(r=>r.OEE).FirstOrDefault();
             var ava = machines.Where(r=>r.MachineType == "Filler").Select(r=>r.Availability).FirstOrDefault();
             var per = machines.Where(r=>r.MachineType == "Filler").Select(r=>r.Performance).FirstOrDefault();
